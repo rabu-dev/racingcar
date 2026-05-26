@@ -1,0 +1,19 @@
+# --- Temporales de Godot ---
+.godot/
+.import/
+export_presets.cfg
+
+# --- Tus carpetas de exportación y ejecutables (Basado en tu captura) ---
+bin/
+ejecutable/
+web/
+android/
+
+# --- Extensiones sueltas por si acaso ---
+*.apk
+*.aab
+*.exe
+*.zip
+*.html
+*.js
+*.wasm

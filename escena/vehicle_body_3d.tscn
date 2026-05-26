@@ -1,0 +1,104 @@
+[gd_scene format=3 uid="uid://dg5q8dxssdck4"]
+
+[ext_resource type="Script" uid="uid://ce8s2xidvfn3i" path="res://scripts/vehicle_body_3d.gd" id="1_y61ot"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y61ot"]
+albedo_color = Color(0.07846785, 0.47657922, 0.81812185, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3wmsh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_d41w2"]
+size = Vector3(2, 0.988, 4.162)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_y61ot"]
+
+[node name="VehicleBody3D" type="VehicleBody3D" unique_id=1823336173]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2192793, 0)
+mass = 1000.0
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, -0.6, 0)
+linear_damp = 0.1
+angular_damp = 0.4
+script = ExtResource("1_y61ot")
+angulo_giro_max = 0.9
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1833852127]
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0.1673466, 0)
+material_override = SubResource("StandardMaterial3D_y61ot")
+mesh = SubResource("BoxMesh_3wmsh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=262534810]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24179721, 0)
+shape = SubResource("BoxShape3D_d41w2")
+
+[node name="RuedaAdelatareaIz" type="VehicleWheel3D" parent="." unique_id=552802849]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.4, 1.2)
+use_as_steering = true
+wheel_roll_influence = 0.03
+wheel_radius = 0.42
+wheel_rest_length = 0.18
+wheel_friction_slip = 2.0
+suspension_travel = 0.15
+suspension_stiffness = 40.0
+damping_compression = 4.5
+damping_relaxation = 5.5
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RuedaAdelatareaIz" unique_id=685366285]
+transform = Transform3D(-4.371139e-08, -0.2, 0, 1, -8.742278e-09, 0, 0, 0, 1, 0.047869682, 0, 0)
+mesh = SubResource("CylinderMesh_y61ot")
+
+[node name="RuedaAdelatareaDer" type="VehicleWheel3D" parent="." unique_id=1670725106]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.4, 1.2)
+use_as_steering = true
+wheel_roll_influence = 0.03
+wheel_radius = 0.42
+wheel_rest_length = 0.18
+wheel_friction_slip = 2.0
+suspension_travel = 0.15
+suspension_stiffness = 40.0
+damping_compression = 4.5
+damping_relaxation = 5.5
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RuedaAdelatareaDer" unique_id=1311923455]
+transform = Transform3D(-4.371139e-08, -0.2, 0, 1, -8.742278e-09, 0, 0, 0, 1, 0.047869682, 0, 0)
+mesh = SubResource("CylinderMesh_y61ot")
+
+[node name="RuadaTraseraIz" type="VehicleWheel3D" parent="." unique_id=1150125615]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.4, -1.2)
+engine_force = 1800.0
+brake = 35.0
+use_as_traction = true
+wheel_roll_influence = 0.03
+wheel_radius = 0.42
+wheel_rest_length = 0.18
+wheel_friction_slip = 2.0
+suspension_travel = 0.15
+suspension_stiffness = 40.0
+damping_compression = 4.5
+damping_relaxation = 5.5
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RuadaTraseraIz" unique_id=2006833362]
+transform = Transform3D(-4.371139e-08, -0.2, 0, 1, -8.742278e-09, 0, 0, 0, 1, 0.047869682, 0, 0)
+mesh = SubResource("CylinderMesh_y61ot")
+
+[node name="RuedaTraseraDer" type="VehicleWheel3D" parent="." unique_id=929751660]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.4, -1.2)
+engine_force = 1800.0
+brake = 35.0
+use_as_traction = true
+wheel_roll_influence = 0.03
+wheel_radius = 0.42
+wheel_rest_length = 0.18
+wheel_friction_slip = 2.0
+suspension_travel = 0.15
+suspension_stiffness = 40.0
+damping_compression = 4.5
+damping_relaxation = 5.5
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RuedaTraseraDer" unique_id=1763510925]
+transform = Transform3D(-4.371139e-08, -0.2, 0, 1, -8.742278e-09, 0, 0, 0, 1, 0.047869682, 0, 0)
+mesh = SubResource("CylinderMesh_y61ot")
+
+[node name="RayCast3D" type="RayCast3D" parent="." unique_id=1004656772]
+transform = Transform3D(-0.99999994, -8.742277e-08, 3.821371e-15, 0, -4.3711385e-08, -1, 8.742277e-08, -0.99999994, 4.371139e-08, 0, 1.2576764, 0)
+debug_shape_custom_color = Color(1, 0, 0, 1)
