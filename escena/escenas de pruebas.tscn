@@ -313,11 +313,12 @@ edge_rp_locals = Array[NodePath]([NodePath("RP_010"), NodePath("RP_023")])
 edge_rp_local_dirs = Array[int]([1, 0])
 
 [node name="RP_001" type="Node3D" parent="RoadManager/Road_002" unique_id=1152439331]
-transform = Transform3D(0.99984616, 4.6052934e-10, -0.017540442, 0, 1, 2.6255288e-08, 0.017540442, -2.6251248e-08, 0.99984616, -0.0018825531, 0.24253237, -0.060617924)
+transform = Transform3D(0.99984616, 4.6052934e-10, -0.017540442, 0, 1, 2.6255288e-08, 0.017540442, -2.6251248e-08, 0.99984616, -0.0018825531, 0.24252474, -0.060617924)
 script = ExtResource("4_sghm6")
 traffic_dir = Array[int]([2, 2, 1, 1])
 lanes = Array[int]([2, 4, 4, 2])
-next_mag = 20.901443
+prior_mag = 41.62461
+next_mag = 35.195465
 prior_pt_init = NodePath("../RP_002")
 next_pt_init = NodePath("../RP_011")
 
@@ -496,7 +497,7 @@ script = ExtResource("4_sghm6")
 traffic_dir = Array[int]([2, 2, 1, 1])
 lanes = Array[int]([2, 4, 4, 2])
 prior_mag = 40.613594
-next_mag = 55.528397
+next_mag = 56.578865
 prior_pt_init = NodePath("../RP_018")
 next_pt_init = NodePath("../RP_020")
 
@@ -515,8 +516,8 @@ transform = Transform3D(-0.15790641, 7.663532e-13, 0.9874541, 4.853211e-12, 1, -
 script = ExtResource("4_sghm6")
 traffic_dir = Array[int]([2, 2, 1, 1])
 lanes = Array[int]([2, 4, 4, 2])
-prior_mag = 56.518684
-next_mag = 61.953644
+prior_mag = 58.283615
+next_mag = 61.951195
 prior_pt_init = NodePath("../RP_020")
 next_pt_init = NodePath("../RP_022")
 
@@ -555,6 +556,63 @@ script = ExtResource("4_sghm6")
 traffic_dir = Array[int]([2, 2, 1, 1, 1])
 lanes = Array[int]([2, 4, 4, 3, 2])
 next_mag = 10.400821
+
+[node name="Road_004" type="Node3D" parent="RoadManager" unique_id=1334976239]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 456.14264, -0.25, -491.55283)
+script = ExtResource("3_t7r8i")
+use_lowpoly_preview = true
+edge_containers = Array[NodePath]([NodePath(""), NodePath("")])
+edge_rp_targets = Array[NodePath]([NodePath(""), NodePath("")])
+edge_rp_target_dirs = Array[int]([-1, -1])
+edge_rp_locals = Array[NodePath]([NodePath("RP_001"), NodePath("RP_005")])
+edge_rp_local_dirs = Array[int]([0, 1])
+
+[node name="RP_001" type="Node3D" parent="RoadManager/Road_004" unique_id=13647123]
+transform = Transform3D(-0.13085997, 0, 0.99140084, 0, 1, 0, -0.99140084, 0, -0.13085997, 0, 0.25, 0)
+script = ExtResource("4_sghm6")
+traffic_dir = Array[int]([2, 2, 1, 1])
+lanes = Array[int]([2, 4, 4, 2])
+next_mag = 231.32524
+prior_pt_init = NodePath("../RP_002")
+
+[node name="RP_002" type="Node3D" parent="RoadManager/Road_004" unique_id=1929978486]
+transform = Transform3D(-0.13085997, 0, 0.99140084, 0, 1, 0, -0.99140084, 0, -0.13085997, -458.6721, 0.25, 60.54245)
+script = ExtResource("4_sghm6")
+traffic_dir = Array[int]([2, 2, 1, 1])
+lanes = Array[int]([2, 4, 4, 2])
+prior_mag = 106.936035
+next_mag = 231.32524
+prior_pt_init = NodePath("../RP_003")
+next_pt_init = NodePath("../RP_001")
+
+[node name="RP_003" type="Node3D" parent="RoadManager/Road_004" unique_id=1754424147]
+transform = Transform3D(0.47664157, 0, 0.8790977, 0, 1, 0, -0.8790977, 0, 0.47664157, -668.33856, 0.25, 18.337708)
+script = ExtResource("4_sghm6")
+traffic_dir = Array[int]([2, 2, 1, 1])
+lanes = Array[int]([2, 4, 4, 2])
+prior_mag = 16.0
+next_mag = 106.936035
+prior_pt_init = NodePath("../RP_004")
+next_pt_init = NodePath("../RP_002")
+
+[node name="RP_004" type="Node3D" parent="RoadManager/Road_004" unique_id=522499802]
+transform = Transform3D(-0.47871122, 0, 0.8779724, 0, 1, 0, -0.8779724, 0, -0.47871122, -694.09436, 0.25003052, 17.08548)
+script = ExtResource("4_sghm6")
+traffic_dir = Array[int]([2, 2, 1, 1])
+lanes = Array[int]([2, 4, 4, 2])
+prior_mag = 241.50386
+next_mag = 16.0
+prior_pt_init = NodePath("../RP_005")
+next_pt_init = NodePath("../RP_003")
+
+[node name="RP_005" type="Node3D" parent="RoadManager/Road_004" unique_id=613452602]
+transform = Transform3D(-0.49487695, 0, 0.86896306, 0, 1, 0, -0.86896306, 0, -0.49487695, -1116.0039, 0.24996948, 252.22107)
+script = ExtResource("4_sghm6")
+traffic_dir = Array[int]([2, 2, 1, 1])
+lanes = Array[int]([2, 4, 4, 2])
+prior_mag = 241.50386
+next_mag = 241.50386
+next_pt_init = NodePath("../RP_004")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=501039863]
 
