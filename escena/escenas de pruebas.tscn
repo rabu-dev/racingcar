@@ -39,9 +39,11 @@ size = Vector3(3000, 0.5, 3000)
 transform = Transform3D(0.002303793, 0, -0.9999973, 0, 1, 0, 0.9999973, 0, 0.002303793, 0.0006855726, 1.1748946, 8.369117)
 physics_material_override = SubResource("PhysicsMaterial_t7r8i")
 center_of_mass = Vector3(0, -0.4, 0)
+engine_force = 0.0
+fuerza_motor = 5500.0
 fuerza_freno = 30.0
 display_velocidad = NodePath("../Medirvelocidad")
-gear_text = NodePath("../marcha")
+gear_text = NodePath("../TextureRect/marcha")
 
 [node name="Camera3D" type="Camera3D" parent="VehicleBody3D" unique_id=765520129]
 transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 3.3753853, -10.714511)
@@ -50,10 +52,10 @@ transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 3
 transform = Transform3D(1, 0, 0, 0, 0.081694975, 0.99665743, 0, -0.99665743, 0.081694975, 0, 9.3780365, 0)
 
 [node name="Medirvelocidad" type="Label" parent="." unique_id=730000616]
-offset_left = 67.0
-offset_top = 495.0
-offset_right = 248.0
-offset_bottom = 572.0
+offset_left = 39.0
+offset_top = 478.0
+offset_right = 220.0
+offset_bottom = 555.0
 label_settings = SubResource("LabelSettings_t74bq")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -68,25 +70,26 @@ offset_bottom = 485.0
 texture = SubResource("ViewportTexture_g5en1")
 metadata/_edit_use_anchors_ = true
 
-[node name="SubViewport" type="SubViewport" parent="TextureRect" unique_id=1743309200]
-size = Vector2i(50, 50)
-size_2d_override_stretch = true
-render_target_update_mode = 4
-
-[node name="marcha" type="Label" parent="." unique_id=826753323]
+[node name="marcha" type="Label" parent="TextureRect" unique_id=826753323]
+layout_mode = 1
 anchors_preset = -1
 anchor_left = -1.562
 anchor_top = -3.801
 anchor_right = -1.562
 anchor_bottom = -3.801
-offset_left = 1862.4241
-offset_top = 2870.048
-offset_right = 1996.4238
-offset_bottom = 2942.048
+offset_left = 117.018005
+offset_top = 325.284
+offset_right = 251.01776
+offset_bottom = 397.284
 label_settings = SubResource("LabelSettings_t7r8i")
 horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="TextureRect" unique_id=1743309200]
+size = Vector2i(50, 50)
+size_2d_override_stretch = true
+render_target_update_mode = 4
 
 [node name="RoadManager" type="Node3D" parent="." unique_id=2059700818]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.518272, 0.5, -3.649)
