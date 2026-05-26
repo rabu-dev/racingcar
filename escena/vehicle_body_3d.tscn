@@ -2,6 +2,11 @@
 
 [ext_resource type="Script" uid="uid://ce8s2xidvfn3i" path="res://scripts/vehicle_body_3d.gd" id="1_y61ot"]
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_y61ot"]
+resource_local_to_scene = true
+rough = true
+absorbent = true
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y61ot"]
 albedo_color = Color(0.07846785, 0.47657922, 0.81812185, 1)
 
@@ -15,6 +20,7 @@ size = Vector3(2, 0.988, 4.162)
 [node name="VehicleBody3D" type="VehicleBody3D" unique_id=1823336173]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2192793, 0)
 mass = 1000.0
+physics_material_override = SubResource("PhysicsMaterial_y61ot")
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, -0.6, 0)
 linear_damp = 0.1
