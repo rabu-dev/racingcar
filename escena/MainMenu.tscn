@@ -6,8 +6,6 @@
 font_size = 48
 font_color = Color(1.7951986, 0.34239274, 0.3528539, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_u3l67"]
-
 [node name="MainMenu" type="Control" unique_id=885058261]
 layout_mode = 3
 anchors_preset = 15
@@ -17,6 +15,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_u3l67")
 escena_del_juego = "uid://c37lgb8q1w6w1"
+mainmenu = "uid://dj0uwx1cvmn4o"
 
 [node name="Panel" type="Panel" parent="." unique_id=2071478061]
 clip_contents = true
@@ -46,61 +45,36 @@ vertical_alignment = 1
 [node name="Play" type="Button" parent="." unique_id=2042547443]
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 491.0
-offset_top = 273.0
-offset_right = -541.0
-offset_bottom = -304.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Label" type="Label" parent="Play" unique_id=1072798212]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -18.5
-offset_top = -11.5
-offset_right = 18.5
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "Play "
-horizontal_alignment = 1
-vertical_alignment = 1
+anchor_left = 0.46788195
+anchor_top = 0.43364197
+anchor_right = 0.5052083
+anchor_bottom = 0.47067901
+offset_right = 41.0
+offset_bottom = 31.0
+text = "Play"
 metadata/_edit_use_anchors_ = true
 
 [node name="Ajustes" type="Button" parent="." unique_id=1124878774]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -73.99994
-offset_top = 95.0
-offset_right = 26.64325
-offset_bottom = 177.94275
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Label" type="Label" parent="Ajustes" unique_id=2102165334]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -42.5
-offset_top = -23.5
-offset_right = 45.5
-offset_bottom = 24.5
+anchors_preset = -1
+anchor_left = 0.4574653
+anchor_top = 0.55401236
+anchor_right = 0.54482913
+anchor_bottom = 0.6820104
 grow_horizontal = 2
 grow_vertical = 2
 text = "Ajustes"
-label_settings = SubResource("LabelSettings_u3l67")
-horizontal_alignment = 1
-vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="Button" parent="." unique_id=1264490042]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4592014
+anchor_top = 0.7222222
+anchor_right = 0.5465653
+anchor_bottom = 0.85022026
+grow_horizontal = 2
+grow_vertical = 2
+text = "Exit
+"
+metadata/_edit_use_anchors_ = true

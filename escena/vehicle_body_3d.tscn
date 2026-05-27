@@ -26,9 +26,7 @@ center_of_mass_mode = 1
 center_of_mass = Vector3(0, -0.6, 0)
 linear_damp = 0.1
 angular_damp = 0.4
-engine_force = 210.05
 script = ExtResource("1_y61ot")
-fuerza_motor = 7000.0
 angulo_giro_max = 0.9
 motor_audio = NodePath("AudioStreamPlayer3D")
 
@@ -63,7 +61,7 @@ transform = Transform3D(-4.371139e-08, -0.2, 0, 1, -8.742278e-09, 0, 0, 0, 1, 0.
 mesh = SubResource("CylinderMesh_y61ot")
 
 [node name="RuedaAdelatareaDer" type="VehicleWheel3D" parent="." unique_id=1670725106]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.4, 1.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9208706, -0.39999998, 1.2)
 use_as_steering = true
 wheel_roll_influence = 0.03
 wheel_radius = 0.42
@@ -80,7 +78,6 @@ mesh = SubResource("CylinderMesh_y61ot")
 
 [node name="RuadaTraseraIz" type="VehicleWheel3D" parent="." unique_id=1150125615]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.4, -1.2)
-engine_force = 210.05
 brake = 35.0
 use_as_traction = true
 wheel_roll_influence = 0.03
@@ -97,8 +94,7 @@ transform = Transform3D(-4.371139e-08, -0.2, 0, 1, -8.742278e-09, 0, 0, 0, 1, 0.
 mesh = SubResource("CylinderMesh_y61ot")
 
 [node name="RuedaTraseraDer" type="VehicleWheel3D" parent="." unique_id=929751660]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.4, -1.2)
-engine_force = 210.05
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9208706, -0.39999998, -1.2)
 brake = 35.0
 use_as_traction = true
 wheel_roll_influence = 0.03

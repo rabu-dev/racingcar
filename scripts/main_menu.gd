@@ -5,24 +5,24 @@ extends Control
 # Asegúrate de que tus nodos en la escena se llamen exactamente "Play" y "Ajustes".
 @onready var play_btn = $Play
 @onready var ajustes_btn = $Ajustes
-
+@onready var exit_btn = $Exit
 # --- Variables Exportadas ---
 # Aquí arrastrarás tu escena de nivel (.tscn) desde el inspector
 @export_file("*.tscn") var escena_del_juego: String
-
+@export_file("*.tscn") var mainmenu: String
 
 # --- Función de Inicio ---
 func _ready() -> void:
 	# Verificamos si los botones existen para evitar errores
-	if play_btn and ajustes_btn:
+	if play_btn and ajustes_btn and exit_btn:
 		# 1. Conectamos las señales de clic
 		play_btn.pressed.connect(_on_play_pressed)
 		ajustes_btn.pressed.connect(_on_ajustes_pressed)
-		
+		exit_btn.pressed.connect(_on_exit_pressed)
 		# 2. Configuración del Cursor (Manita)
 		play_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		ajustes_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		
+		exit_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		# 3. Configuración para MANDO / TECLADO
 		# Le decimos al botón Play que agarre el foco (que esté seleccionado por defecto)
 		play_btn.grab_focus()
@@ -32,6 +32,7 @@ func _ready() -> void:
 		play_btn.focus_neighbor_bottom = ajustes_btn.get_path()
 		# Si presionas ARRIBA en Ajustes, vas a Play
 		ajustes_btn.focus_neighbor_top = play_btn.get_path()
+		exit_btn.focus_neighbor_top = ajustes_btn.get_path()
 		
 	else:
 		printerr("Error: No se encontraron los nodos 'Play' o 'Ajustes'. Revisa los nombres en la escena.")
@@ -52,4 +53,14 @@ func _on_play_pressed() -> void:
 
 func _on_ajustes_pressed() -> void:
 	print("Botón Ajustes presionado")
+	# Verificamos si hay una escena asignada
+	if escena_del_juego != "":
+		# Cambiamos a la escena del juego
+		get_tree().change_scene_to_file(mainmenu)
+	else:
+		printerr("Error: No has asignado la 'Escena del Juego' en el Inspector del nodo MainMenu.")
 	# Aquí puedes poner lógica futura, como mostrar un popup de ajustes
+	
+func _on_exit_pressed() -> void:
+	get_tree().quit()
+	

@@ -16,6 +16,7 @@ extends VehicleBody3D
 # =====================================================
 # SONIDO DEL MOTOR (MEJORADO)
 # =====================================================
+
 @export var motor_audio: AudioStreamPlayer3D
 @export var pitch_minimo: float = 0.5
 @export var pitch_maximo: float = 2.5          # Aumentado para acelerones
@@ -29,6 +30,7 @@ var boost_cambio_marcha: float = 0.0  # Spike temporal al cambiar marcha
 # =====================================================
 # MARCHAS (R → N → 1-6)
 # =====================================================
+
 var marcha_actual: int = 0
 const MARCHA_MAXIMA: int = 6
 const MARCHA_MINIMA: int = -1
@@ -57,11 +59,11 @@ func _input(event):
 	if event.is_action_pressed("subir_marcha") or (event is InputEventKey and event.pressed and event.keycode == KEY_E):
 		cambiar_marcha(1)
 		boost_cambio_marcha = 0.6  # SPIKE de revoluciones al cambiar
-		print("⚙️ Marcha Manual+: ", obtener_texto_marcha())
+		#print("⚙️ Marcha Manual+: ", obtener_texto_marcha())
 	elif event.is_action_pressed("bajar_marcha") or (event is InputEventKey and event.pressed and event.keycode == KEY_Q):
 		cambiar_marcha(-1)
 		boost_cambio_marcha = 0.4  # Spike menor al bajar marcha
-		print("⚙️ Marcha Manual-: ", obtener_texto_marcha())
+		#print("⚙️ Marcha Manual-: ", obtener_texto_marcha())
 
 func cambiar_marcha(direccion: int):
 	marcha_actual = clamp(marcha_actual + direccion, MARCHA_MINIMA, MARCHA_MAXIMA)
@@ -75,9 +77,10 @@ func obtener_texto_marcha() -> String:
 		return str(marcha_actual)
 
 func _physics_process(delta):
-	# ==========================================
-	# 1. DIRECCIÓN
-	# ==========================================
+	# ==========================================#
+	# 1. DIRECCIÓN								#
+	# ==========================================#
+	
 	var giro_input = 0.0
 	giro_input = Input.get_axis("ui_right", "ui_left") 
 	
@@ -95,6 +98,7 @@ func _physics_process(delta):
 	# ==========================================
 	# 2. MOTOR Y FRENOS
 	# ==========================================
+	
 	var velocidad_kmh = linear_velocity.length() * 3.6
 	
 	var acel_input = 0.0
@@ -125,6 +129,7 @@ func _physics_process(delta):
 	# ==========================================
 	# 3. SONIDO DEL MOTOR (MEJORADO)
 	# ==========================================
+	
 	if motor_audio:
 		# Calcular RPM objetivo basado en velocidad
 		var rpm_objetivo = 0.8  # Ralentí base
@@ -154,6 +159,7 @@ func _physics_process(delta):
 	# ==========================================
 	# 4. INTERFAZ (UI)
 	# ==========================================
+	
 	if display_velocidad:
 		display_velocidad.text = "%d km/h" % int(velocidad_kmh)
 		

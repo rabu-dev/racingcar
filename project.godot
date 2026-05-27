@@ -17,6 +17,10 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/image="uid://bhd75nb5ka0q1"
 config/icon="res://icon.svg"
 
+[autoload]
+
+ConfigManager="*uid://backcvnoa1jjn"
+
 [dotnet]
 
 project/assembly_name="racingcar"
