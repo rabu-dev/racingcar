@@ -1,0 +1,159 @@
+[gd_scene format=3 uid="uid://6gfijpeaqrye"]
+
+[ext_resource type="Script" uid="uid://bo73k4exeqp8u" path="res://scripts/garaje.gd" id="1_41rl8"]
+[ext_resource type="PackedScene" uid="uid://dg5q8dxssdck4" path="res://escena/vehicle_body_3d.tscn" id="1_at22x"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_at22x"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_at22x"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_41rl8"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_41rl8"]
+size = Vector3(1, 0.5703125, 1)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_41rl8"]
+resource_local_to_scene = true
+rough = true
+absorbent = true
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_at22x"]
+
+[sub_resource type="Sky" id="Sky_41rl8"]
+sky_material = SubResource("ProceduralSkyMaterial_at22x")
+
+[sub_resource type="Environment" id="Environment_482wv"]
+background_mode = 2
+sky = SubResource("Sky_41rl8")
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_wsjsr"]
+
+[sub_resource type="Compositor" id="Compositor_f0bcb"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_at22x"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_41rl8"]
+font_size = 32
+
+[node name="Garaje" type="Node3D" unique_id=1090929236]
+script = ExtResource("1_41rl8")
+
+[node name="model" type="Node3D" parent="." unique_id=327136595]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="model" unique_id=1010595036]
+physics_material_override = SubResource("PhysicsMaterial_at22x")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="model/StaticBody3D" unique_id=2146894838]
+transform = Transform3D(25, 0, 0, 0, 1, 0, 0, 0, 25, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_at22x")
+mesh = SubResource("BoxMesh_41rl8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="model/StaticBody3D" unique_id=1264807824]
+transform = Transform3D(25, 0, 0, 0, 25, 0, 0, 0, 25, 0, -6.5315466, 0)
+shape = SubResource("BoxShape3D_41rl8")
+
+[node name="VehicleBody3D" parent="." unique_id=1823336173 instance=ExtResource("1_at22x")]
+transform = Transform3D(0.7387142, 0, -0.6740188, 0, 1, 0, 0.6740188, 0, 0.7387142, 0, 1.8922524, 0)
+physics_material_override = SubResource("PhysicsMaterial_41rl8")
+script = null
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1573678032]
+transform = Transform3D(0.53635716, 0, 0.8439911, 0, 1, 0, -0.8439911, 0, 0.53635716, 4.197089, 2.9358108, 5.877008)
+fov = 61.8
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1876967678]
+environment = SubResource("Environment_482wv")
+camera_attributes = SubResource("CameraAttributesPractical_wsjsr")
+compositor = SubResource("Compositor_f0bcb")
+
+[node name="Control" type="Control" parent="." unique_id=1090238786]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Control" unique_id=672075950]
+material = SubResource("CanvasItemMaterial_at22x")
+use_parent_material = true
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 342.0
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="Control/Panel" unique_id=1421651436]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 15.0
+offset_right = 329.0
+offset_bottom = 123.0
+alignment = 1
+
+[node name="Titulo" type="Label" parent="Control/Panel/VBoxContainer3" unique_id=261951356]
+layout_mode = 2
+text = "Garaje"
+label_settings = SubResource("LabelSettings_41rl8")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Panel" unique_id=1865421393]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.03508772
+anchor_top = 0.22685185
+anchor_right = -0.038011696
+anchor_bottom = 0.58950615
+offset_right = 341.0
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="BtnAzul" type="Button" parent="Control/Panel/VBoxContainer" unique_id=31737248]
+layout_mode = 2
+action_mode = 0
+text = "Color Azul
+"
+
+[node name="BtnRojo" type="Button" parent="Control/Panel/VBoxContainer" unique_id=84345291]
+layout_mode = 2
+action_mode = 0
+text = "Color  Rojo
+"
+
+[node name="BtnAmarillo" type="Button" parent="Control/Panel/VBoxContainer" unique_id=956090568]
+layout_mode = 2
+action_mode = 0
+text = "Color Amarillo
+"
+
+[node name="BtnMejorar" type="Button" parent="Control/Panel/VBoxContainer" unique_id=847694868]
+layout_mode = 2
+text = "Mejorar
+"
+
+[node name="BtnJugar" type="Button" parent="Control/Panel/VBoxContainer" unique_id=629570858]
+layout_mode = 2
+text = "Jugar
+"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Control/Panel" unique_id=2065735639]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 511.0
+offset_right = 327.0
+offset_bottom = 637.0
+alignment = 1
+
+[node name="DineroMenu" type="Label" parent="Control/Panel/VBoxContainer2" unique_id=1683335279]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_41rl8")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="Control/Panel/VBoxContainer/BtnAzul" to="." method="_on_btn_azul_pressed"]
+[connection signal="pressed" from="Control/Panel/VBoxContainer/BtnRojo" to="." method="_on_btn_rojo_pressed"]
+[connection signal="pressed" from="Control/Panel/VBoxContainer/BtnAmarillo" to="." method="_on_btn_amarillo_pressed"]
+[connection signal="pressed" from="Control/Panel/VBoxContainer/BtnMejorar" to="." method="_on_btn_mejorar_motor_pressed"]
+[connection signal="pressed" from="Control/Panel/VBoxContainer/BtnJugar" to="." method="_on_btn_jugar_pressed"]

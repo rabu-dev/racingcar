@@ -5,15 +5,15 @@ extends Node
 	{
 		"id": "correra_01",
 		"titulo": "Poul Swift",
-		"vuelta_total": 5,
+		"vuelta_total": 3,
 		"usuarios": [
 			{"id": "1", "user": "rabu", "progreso_vueltas": 0},
-			{"id": "2", "user": "bot1", "progreso_vueltas": 0}
 		]
 	},
 	{
 		"id": "correra_02",
 		"titulo": "Jon Carter",
+		"vuelta_total": 1,
 		"tiempos": [
 			{
 				"id": 1,
@@ -22,7 +22,6 @@ extends Node
 		],
 		"player": [
 			{"id": 1, "user": "rabu", "progreso_vueltas": 0},
-			{"id": 2, "user": "bot1", "progreso_vueltas": 0}
 		]
 	}
 ]

@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://c60ait6u7yjg5"]
+
+[ext_resource type="Script" uid="uid://cff2rm6tur27g" path="res://scripts/notificaciones.gd" id="1_c8y6r"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_7t6oa"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_yi82n"]
+stacked_outline_count = 1
+stacked_outline_0/color = Color(0.837305, 0, 0, 1)
+
+[sub_resource type="Animation" id="Animation_0kxsc"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Panel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-401, 35)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hm14x"]
+_data = {
+&"RESET": SubResource("Animation_0kxsc")
+}
+
+[sub_resource type="Animation" id="Animation_odxf3"]
+resource_name = "anim_notificaion"
+length = 10.186505
+step = 0.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Panel:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.2140443, 9.960974),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(-400, 35), Vector2(200, 35), Vector2(-400, 35)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_on1s8"]
+_data = {
+&"anim_notificaion": SubResource("Animation_odxf3")
+}
+
+[node name="Notificaciones" type="Control" unique_id=879596310 node_paths=PackedStringArray("panel", "mensaje_label", "anim_player")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_c8y6r")
+panel = NodePath("Panel")
+mensaje_label = NodePath("Panel/Mesaje")
+anim_player = NodePath("AnimationPlayer")
+
+[node name="Panel" type="Panel" parent="." unique_id=1662677558]
+unique_name_in_owner = true
+material = SubResource("CanvasItemMaterial_7t6oa")
+layout_mode = 1
+offset_left = -401.0
+offset_top = 35.0
+offset_right = -15.0
+offset_bottom = 147.99991
+
+[node name="Mesaje" type="Label" parent="Panel" unique_id=831220211]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 36.0
+offset_top = 17.0
+offset_right = 354.0
+offset_bottom = 97.0
+label_settings = SubResource("LabelSettings_yi82n")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=2094948219]
+unique_name_in_owner = true
+libraries/ = SubResource("AnimationLibrary_hm14x")
+libraries/anim_notificacion = SubResource("AnimationLibrary_on1s8")

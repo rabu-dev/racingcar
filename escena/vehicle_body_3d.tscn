@@ -18,7 +18,24 @@ size = Vector3(2, 0.988, 4.162)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_y61ot"]
 
-[node name="VehicleBody3D" type="VehicleBody3D" unique_id=1823336173 node_paths=PackedStringArray("motor_audio")]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ht2fq"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_bop24"]
+direction = Vector3(0, 1, 0)
+spread = 30.0
+initial_velocity_min = 0.5
+initial_velocity_max = 1.5
+scale_min = 0.19999999
+scale_max = 0.5
+color = Color(0.66668326, 0.66668326, 0.66668326, 0.54200006)
+
+[sub_resource type="QuadMesh" id="QuadMesh_vn4xl"]
+size = Vector2(0.5, 0.5)
+
+[node name="VehicleBody3D" type="VehicleBody3D" unique_id=1823336173 node_paths=PackedStringArray("motor_audio", "faros_delanteros", "humo_trasero_izq", "humo_trasero_der")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2192793, 0)
 mass = 1000.0
 physics_material_override = SubResource("PhysicsMaterial_y61ot")
@@ -27,11 +44,18 @@ center_of_mass = Vector3(0, -0.6, 0)
 linear_damp = 0.1
 angular_damp = 0.4
 script = ExtResource("1_y61ot")
-angulo_giro_max = 0.9
 motor_audio = NodePath("AudioStreamPlayer3D")
+faros_delanteros = [null, null]
+humo_trasero_izq = NodePath("HumoTraseroDer")
+humo_trasero_der = NodePath("HumoTraseroDer2")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1833852127]
 transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0.1673466, 0)
+material_override = SubResource("StandardMaterial3D_y61ot")
+mesh = SubResource("BoxMesh_3wmsh")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D" unique_id=983877115]
+transform = Transform3D(0.7969687, 0, 0, 0, 1, 0, 0, 0, 0.051860243, 0, 0.1673466, 0.5173879)
 material_override = SubResource("StandardMaterial3D_y61ot")
 mesh = SubResource("BoxMesh_3wmsh")
 
@@ -92,6 +116,24 @@ damping_relaxation = 5.5
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RuadaTraseraIz" unique_id=2006833362]
 transform = Transform3D(-4.371139e-08, -0.2, 0, 1, -8.742278e-09, 0, 0, 0, 1, 0.047869682, 0, 0)
 mesh = SubResource("CylinderMesh_y61ot")
+
+[node name="HumoTraseroDer" type="GPUParticles3D" parent="." unique_id=183694999]
+transform = Transform3D(-0.9999451, 0.010471704, 2.2513024e-08, 2.2119437e-08, -3.7701682e-08, 0.99999994, 0.010471701, 0.9999454, 3.746797e-08, 0.8, -0.86150086, -1.2)
+material_override = SubResource("StandardMaterial3D_ht2fq")
+amount = 50
+local_coords = true
+trail_lifetime = 1.0
+process_material = SubResource("ParticleProcessMaterial_bop24")
+draw_pass_1 = SubResource("QuadMesh_vn4xl")
+
+[node name="HumoTraseroDer2" type="GPUParticles3D" parent="." unique_id=2037090070]
+transform = Transform3D(-1, 8.742278e-08, 3.821371e-15, 0, -4.371139e-08, 1, 8.742278e-08, 1, 4.371139e-08, -0.9208706, -0.7933456, -1.6283276)
+material_override = SubResource("StandardMaterial3D_ht2fq")
+amount = 50
+local_coords = true
+trail_lifetime = 1.0
+process_material = SubResource("ParticleProcessMaterial_bop24")
+draw_pass_1 = SubResource("QuadMesh_vn4xl")
 
 [node name="RuedaTraseraDer" type="VehicleWheel3D" parent="." unique_id=929751660]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9208706, -0.39999998, -1.2)

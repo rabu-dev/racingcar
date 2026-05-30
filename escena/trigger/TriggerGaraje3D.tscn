@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://dkxwohmmg475j"]
+
+[ext_resource type="Script" uid="uid://tvb1nnmq3nqw" path="res://scripts/trigger_garaje_3d.gd" id="1_sfi57"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_dba84"]
+margin = 0.0
+height = 2.3728638
+radius = 2.7348633
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sfi57"]
+transparency = 1
+albedo_color = Color(1, 0.5325784, 0.4769652, 1)
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+emission_energy_multiplier = 16.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lva2d"]
+material = SubResource("StandardMaterial3D_sfi57")
+
+[node name="ZonaGaraje" type="Area3D" unique_id=1077739992]
+script = ExtResource("1_sfi57")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1701934780]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027496338, 0)
+shape = SubResource("CylinderShape3D_dba84")
+debug_color = Color(0, 0.60038817, 0.70000815, 0.27100003)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1749468822]
+transform = Transform3D(5, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 4.7683716e-07)
+mesh = SubResource("CylinderMesh_lva2d")
+
+[connection signal="input_event" from="." to="." method="_on_input_event_open_garaje"]

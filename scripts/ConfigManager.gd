@@ -10,7 +10,7 @@ var settings = {
 		"resolution": Vector2i(1280, 720)
 	},
 	"audio": {
-		"master_volume": 70
+		"master_volume": 100
 	}
 }
 

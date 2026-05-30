@@ -2,6 +2,13 @@
 
 [ext_resource type="Script" uid="uid://cv1tokxdjelk0" path="res://scripts/misones.gd" id="1_hqw7o"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_hqw7o"]
+line_spacing = 5.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_jcclf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_mfwjg"]
+
 [node name="Misones" type="Control" unique_id=807792188]
 layout_mode = 3
 anchors_preset = 15
@@ -11,16 +18,36 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hqw7o")
 
-[node name="Label_Mision" type="Label" parent="." unique_id=723190289]
-layout_mode = 0
-offset_left = 44.0
-offset_top = 5.0
-offset_right = 84.0
-offset_bottom = 28.0
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1886326567]
+clip_contents = true
+layout_direction = 1
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 26.0
+offset_right = 470.0
+grow_vertical = 2
+alignment = 1
 
-[node name="Label_Mision2" type="Label" parent="." unique_id=1947028212]
-layout_mode = 0
-offset_left = 56.0
-offset_top = 84.0
-offset_right = 96.0
-offset_bottom = 107.0
+[node name="Label_Mision" type="Label" parent="VBoxContainer" unique_id=723190289]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_hqw7o")
+vertical_alignment = 1
+
+[node name="Label_Mision2" type="Label" parent="VBoxContainer" unique_id=1947028212]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_jcclf")
+
+[node name="Dinero" type="Label" parent="." unique_id=40824593]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -210.0
+offset_top = 53.0
+offset_right = -60.0
+offset_bottom = 112.0
+grow_horizontal = 0
+label_settings = SubResource("LabelSettings_mfwjg")
+horizontal_alignment = 1
+vertical_alignment = 1

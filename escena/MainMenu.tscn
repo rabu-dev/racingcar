@@ -16,6 +16,7 @@ grow_vertical = 2
 script = ExtResource("1_u3l67")
 escena_del_juego = "uid://c37lgb8q1w6w1"
 mainmenu = "uid://dj0uwx1cvmn4o"
+escena_del_tutorial = "uid://b3q3n7amiavmi"
 
 [node name="Panel" type="Panel" parent="." unique_id=2071478061]
 clip_contents = true
@@ -54,13 +55,28 @@ offset_bottom = 31.0
 text = "Play"
 metadata/_edit_use_anchors_ = true
 
+[node name="Tutorial" type="Button" parent="." unique_id=749503068]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.43376556
+anchor_top = 0.51437044
+anchor_right = 0.43376556
+anchor_bottom = 0.51437044
+offset_left = 39.302063
+offset_top = 15.687958
+offset_right = 123.30206
+offset_bottom = 70.68796
+text = "Tutorial
+"
+metadata/_edit_use_anchors_ = true
+
 [node name="Ajustes" type="Button" parent="." unique_id=1124878774]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.4574653
-anchor_top = 0.55401236
-anchor_right = 0.54482913
-anchor_bottom = 0.6820104
+anchor_left = 0.46006945
+anchor_top = 0.64506173
+anchor_right = 0.5474333
+anchor_bottom = 0.7730598
 grow_horizontal = 2
 grow_vertical = 2
 text = "Ajustes"
@@ -69,10 +85,10 @@ metadata/_edit_use_anchors_ = true
 [node name="Exit" type="Button" parent="." unique_id=1264490042]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.4592014
-anchor_top = 0.7222222
-anchor_right = 0.5465653
-anchor_bottom = 0.85022026
+anchor_left = 0.45833334
+anchor_top = 0.8009259
+anchor_right = 0.5456972
+anchor_bottom = 0.928924
 grow_horizontal = 2
 grow_vertical = 2
 text = "Exit

@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://dj0uwx1cvmn4o"]
+[gd_scene format=3 uid="uid://brmd47vl86xw5"]
 
-[ext_resource type="Script" uid="uid://ca4ymm8nc7j5p" path="res://scripts/SettingsMenu.gd" id="1_gxyo7"]
+[ext_resource type="Script" uid="uid://ca4ymm8nc7j5p" path="res://scripts/SettingsMenu.gd" id="1_q1uqi"]
 
 [node name="Ajustes" type="Control" unique_id=615160214]
 layout_mode = 3
@@ -9,7 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_gxyo7")
+script = ExtResource("1_q1uqi")
 mainmenu = "uid://b3bae250pv333"
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=1924708781]
@@ -75,8 +75,8 @@ size_flags_horizontal = 6
 size_flags_vertical = 4
 ticks_position = 3
 
-[node name="Button" type="Button" parent="PanelContainer/VBoxContainer/TabContainer/VBoxContainer" unique_id=1340378834]
+[node name="Save" type="Button" parent="PanelContainer/VBoxContainer/TabContainer/VBoxContainer" unique_id=1340378834]
 layout_mode = 2
-text = "Guardar y Salir"
+text = "Guardar "
 
-[connection signal="pressed" from="PanelContainer/VBoxContainer/TabContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/TabContainer/VBoxContainer/Save" to="." method="_on_button_pressed"]
