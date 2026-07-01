@@ -52,23 +52,23 @@ jobs:
             rm Godot_v${GODOT_VERSION}_linux.x86_64.zip
           fi
           /opt/godot/godot --version
-                - name: Install Godot export templates
-                  env:
-                    GODOT_VERSION: "4.7-stable"
-                  run: |
-                    export_dir="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}"
-                    mkdir -p "$export_dir"
-                    if [ ! -f "$export_dir/web_dlink_nothreads_debug.zip" ]; then
-                      wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.zip" -O /tmp/export_templates.zip
-                      unzip -q /tmp/export_templates.zip -d "$export_dir"
-                      # Rename if needed
-                      if [ -f "$export_dir/web_debug.zip" ]; then
-                        cp "$export_dir/web_debug.zip" "$export_dir/web_dlink_nothreads_debug.zip"
-                      fi
-                      if [ -f "$export_dir/web_release.zip" ]; then
-                        cp "$export_dir/web_release.zip" "$export_dir/web_dlink_nothreads_release.zip"
-                      fi
-                    fi
+      - name: Install Godot export templates
+        env:
+          GODOT_VERSION: "4.7-stable"
+        run: |
+          export_dir="$HOME/.local/share/godot/export_templates/4.7.stable"
+          mkdir -p "$export_dir"
+          if [ ! -f "$export_dir/web_dlink_nothreads_debug.zip" ]; then
+            wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.zip" -O /tmp/export_templates.zip
+            unzip -q /tmp/export_templates.zip -d "$export_dir"
+            # Rename if needed
+            if [ -f "$export_dir/web_debug.zip" ]; then
+              cp "$export_dir/web_debug.zip" "$export_dir/web_dlink_nothreads_debug.zip"
+            fi
+            if [ -f "$export_dir/web_release.zip" ]; then
+              cp "$export_dir/web_release.zip" "$export_dir/web_dlink_nothreads_release.zip"
+            fi
+          fi
 
       - name: Build web export
         env:
