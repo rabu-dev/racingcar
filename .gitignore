@@ -1,13 +1,17 @@
 # --- Temporales de Godot ---
 .godot/
 .import/
-export_presets.cfg
 
 # --- Tus carpetas de exportación y ejecutables (Basado en tu captura) ---
 bin/
 ejecutable/
 web/
 android/
+
+# export_presets.cfg se trackea para que el CI de GitHub Actions
+# pueda exportar el proyecto. Si te molesta tenerlo en el repo, mueve
+# las credenciales de Android a un secreto y reconstruye el preset a
+# partir de una plantilla en CI.
 
 # --- Extensiones sueltas por si acaso ---
 *.apk

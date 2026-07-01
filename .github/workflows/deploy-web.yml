@@ -1,0 +1,92 @@
+name: Deploy web build to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/**"
+      - "escena/**"
+      - "addons/**"
+      - "asset/**"
+      - "project.godot"
+      - "export_presets.cfg"
+      - ".github/workflows/deploy-web.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Godot
+        uses: actions/cache@v4
+        with:
+          path: /opt/godot
+          key: godot-${{ runner.os }}-4.7-stable
+          restore-keys: |
+            godot-${{ runner.os }}-4.7-
+
+      - name: Install Godot 4.7 (stable)
+        env:
+          GODOT_VERSION: "4.7-stable"
+        run: |
+          if [ ! -f /opt/godot/godot ]; then
+            mkdir -p /opt/godot
+            cd /tmp
+            wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+            unzip -q "Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+            mv Godot_v${GODOT_VERSION}_linux.x86_64 /opt/godot/godot
+            chmod +x /opt/godot/godot
+            rm Godot_v${GODOT_VERSION}_linux.x86_64.zip
+          fi
+          /opt/godot/godot --version
+
+      - name: Build web export
+        env:
+          GODOT: /opt/godot/godot
+        run: |
+          mkdir -p build_web
+          $GODOT \
+            --headless \
+            --path "$GITHUB_WORKSPACE" \
+            --export-debug "Web" \
+            "build_web/racingcar.html"
+
+      - name: Prepare Pages artifact
+        run: |
+          cd build_web
+          # GitHub Pages no procesa Jekyll y/o ignora archivos con _ inicial
+          touch .nojekyll
+          # El export de Godot genera racingcar.html; copiamos como index.html
+          # para que https://rabu-dev.github.io/racingcar/ cargue directo.
+          cp racingcar.html index.html
+          ls -la
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build_web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
