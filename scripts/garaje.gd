@@ -24,29 +24,38 @@ func actualizar_interfaz_dinero() -> void:
 
 # Conecta la señal 'pressed()' de tu botón azul de la UI aquí:
 func _on_btn_azul_pressed() -> void:
-	var compra_ok = DatosJuego.cambiar_color(Color.BLUE)
-	if compra_ok:
-		actualizar_color_visual()
-		actualizar_interfaz_dinero() # Actualiza la UI tras gastar dinero
-		print("¡Color cambiado a azul!")
+	_intentar_cambiar_color(Color.BLUE, "azul")
 
 
 # Conecta la señal 'pressed()' de tu botón rojo de la UI aquí:
 func _on_btn_rojo_pressed() -> void:
-	var compra_ok = DatosJuego.cambiar_color(Color.RED)
-	if compra_ok:
-		actualizar_color_visual()
-		actualizar_interfaz_dinero()
-		print("¡Color cambiado a rojo!")
+	_intentar_cambiar_color(Color.RED, "rojo")
 
 
 # Conecta la señal 'pressed()' de tu botón amarillo de la UI aquí:
 func _on_btn_amarillo_pressed() -> void:
-	var compra_ok = DatosJuego.cambiar_color(Color.YELLOW)
-	if compra_ok:
+	_intentar_cambiar_color(Color.YELLOW, "amarillo")
+
+
+# Centraliza la compra de pintura: protege contra chasis_mesh null, material null,
+# y contra comprar un color que ya está aplicado.
+func _intentar_cambiar_color(color: Color, nombre: String) -> void:
+	if not chasis_mesh:
+		push_warning("garaje.gd: chasis_mesh no encontrado (revisa la ruta @onready del nodo).")
+		return
+	var material = chasis_mesh.get_active_material(0)
+	if not material is StandardMaterial3D:
+		push_warning("garaje.gd: el material de la malla no es StandardMaterial3D.")
+		return
+
+	if material.albedo_color == color:
+		Notificaciones.mostrar_notificacion("El coche ya está de color %s" % nombre, 3.0)
+		return
+
+	if DatosJuego.cambiar_color(color):
 		actualizar_color_visual()
 		actualizar_interfaz_dinero()
-		print("¡Color cambiado a amarillo!")
+		print("¡Color cambiado a %s!" % nombre)
 
 
 # Conecta la señal 'pressed()' de tu botón de mejoras aquí:

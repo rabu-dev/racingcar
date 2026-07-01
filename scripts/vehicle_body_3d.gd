@@ -76,13 +76,26 @@ const INTERVALO_GUARDADO: float = 30.0
 @export var friccion_seco: float = 1.8
 @export var friccion_lluvia: float = 0.9
 
+@export_group("Control IA")
+@export var controlado_por_ai: bool = false
+@export var mantener_camara_en_ai: bool = false
+
 var es_de_noche: bool = false
 var esta_lloviendo: bool = false
+var ai_input_aceleracion: float = 0.0
+var ai_input_freno: float = 0.0
+var ai_input_direccion: float = 0.0
+var ai_input_freno_mano: float = 0.0
 
 # =====================================================
 # READY
 # =====================================================
 func _ready():
+	
+	DatosJuego.registrar_coche(self)
+	if controlado_por_ai and marcha_actual <= 0:
+		marcha_actual = 1
+	_configurar_camara_ai()
 	# Aplicar color guardado al coche
 	_aplicar_color_coche()
 	
@@ -141,18 +154,27 @@ func _ready():
 	_actualizar_faros()
 
 # =====================================================
-# INPUT
+# INPUT (TECLADO + MANDO)
 # =====================================================
 func _input(event):
-	if event.is_action_pressed("subir_marcha") or (event is InputEventKey and event.pressed and event.keycode == KEY_E):
+
+	# Subir marcha
+	if event.is_action_pressed("subir_marcha"):
 		cambiar_marcha(1)
 		boost_cambio_marcha = 0.6
-	elif event.is_action_pressed("bajar_marcha") or (event is InputEventKey and event.pressed and event.keycode == KEY_Q):
+		print("⬆ Marcha:", obtener_texto_marcha())
+
+	# Bajar marcha
+	elif event.is_action_pressed("bajar_marcha"):
 		cambiar_marcha(-1)
 		boost_cambio_marcha = 0.4
-
+		print("⬇ Marcha:", obtener_texto_marcha())
 func cambiar_marcha(direccion: int):
-	marcha_actual = clamp(marcha_actual + direccion, MARCHA_MINIMA, MARCHA_MAXIMA)
+	marcha_actual = clamp(
+		marcha_actual + direccion,
+		MARCHA_MINIMA,
+		MARCHA_MAXIMA
+	)
 
 func obtener_texto_marcha() -> String:
 	if marcha_actual == -1:
@@ -161,7 +183,6 @@ func obtener_texto_marcha() -> String:
 		return "N"
 	else:
 		return str(marcha_actual)
-
 # =====================================================
 # PHYSICS PROCESS
 # =====================================================
@@ -169,13 +190,7 @@ func _physics_process(delta):
 	# ------------------------------------------
 	# 1. DIRECCIÓN (0.0 - 1.0, suavizada)
 	# ------------------------------------------
-	var giro_crudo = Input.get_axis("ui_right", "ui_left")
-
-	if giro_crudo == 0.0:
-		if Input.is_key_pressed(KEY_A):
-			giro_crudo = 1.0
-		elif Input.is_key_pressed(KEY_D):
-			giro_crudo = -1.0
+	var giro_crudo = _obtener_input_direccion()
 
 	# Factor de velocidad: a mayor velocidad, menos giro possible
 	var velocidad_kmh = linear_velocity.length() * 3.6
@@ -192,18 +207,9 @@ func _physics_process(delta):
 	# ------------------------------------------
 	# 2. MOTOR Y FRENOS (0.0 - 1.0, suavizados)
 	# ------------------------------------------
-	var acel_crudo = 0.0
-	if Input.is_key_pressed(KEY_W) or Input.is_action_pressed("acelerar"):
-		acel_crudo = 1.0
-
-	var freno_crudo = 0.0
-	if Input.is_key_pressed(KEY_S) or Input.is_action_pressed("frenar"):
-		freno_crudo = 1.0
-
-	# Freno mano (ESPACIO)
-	var freno_mano_crudo = 0.0
-	if Input.is_key_pressed(KEY_SPACE) or Input.is_action_pressed("freno_mano"):
-		freno_mano_crudo = 1.0
+	var acel_crudo = _obtener_input_aceleracion()
+	var freno_crudo = _obtener_input_freno()
+	var freno_mano_crudo = _obtener_input_freno_mano()
 
 	# Suavizado de inputs
 	input_aceleracion = lerp(input_aceleracion, acel_crudo, delta * suavidad_freno)
@@ -258,7 +264,7 @@ func _physics_process(delta):
 		intensidad_derrape = clamp(intensidad_derrape + factor_freno_mano, 0.0, 1.0)
 	else:
 		intensidad_derrape = lerp(intensidad_derrape, factor_freno_mano * 0.5, delta * 4.0)
-	print("lat:", snapped(velocidad_lateral, 0.1), " kmh:", int(velocidad_kmh), " dir:", snapped(input_direccion, 0.01), " freno:", snapped(input_freno, 0.01), " mano:", snapped(input_freno_mano, 0.01), " humo:", int(intensidad_derrape * 100))
+	#print("lat:", snapped(velocidad_lateral, 0.1), " kmh:", int(velocidad_kmh), " dir:", snapped(input_direccion, 0.01), " freno:", snapped(input_freno, 0.01), " mano:", snapped(input_freno_mano, 0.01), " humo:", int(intensidad_derrape * 100))
 
 	_controlar_humo(humo_trasero_izq, intensidad_derrape)
 	_controlar_humo(humo_trasero_der, intensidad_derrape)
@@ -297,8 +303,12 @@ func _physics_process(delta):
 	temporizador_guardado += delta
 	if temporizador_guardado >= INTERVALO_GUARDADO:
 		temporizador_guardado = 0.0
+		# Mantenemos radianes (Vector3 Euler) para ser consistentes con
+		# DatosJuego.guardar_partida() que ya usa basis.get_euler().
+		# Antes se guardaba rotation_degrees, mezclando grados/radianes y
+		# rompiendo la rotación al cargar la partida.
 		DatosJuego.posicion_coche = global_position
-		DatosJuego.rotacion_coche = rotation_degrees
+		DatosJuego.rotacion_coche = global_transform.basis.get_euler()
 		DatosJuego.guardar_partida()
 
 	# ------------------------------------------
@@ -315,6 +325,17 @@ func _physics_process(delta):
 # =====================================================
 func _on_hora_actualizada(hora: float) -> void:
 	_comprobar_y_actualizar_hora(hora)
+
+func set_ai_input(aceleracion: float, freno_value: float, direccion: float, freno_mano_value: float = 0.0) -> void:
+	ai_input_aceleracion = clamp(aceleracion, 0.0, 1.0)
+	ai_input_freno = clamp(freno_value, 0.0, 1.0)
+	ai_input_direccion = clamp(direccion, -1.0, 1.0)
+	ai_input_freno_mano = clamp(freno_mano_value, 0.0, 1.0)
+	if controlado_por_ai and marcha_actual <= 0:
+		marcha_actual = 1
+
+func limpiar_ai_input() -> void:
+	set_ai_input(0.0, 0.0, 0.0, 0.0)
 
 func _comprobar_y_actualizar_hora(hora: float) -> void:
 	var nuevo_estado_noche = (hora >= 20.0 or hora < 6.0)
@@ -357,6 +378,42 @@ func _actualizar_friccion_ruedas(valor_friccion: float) -> void:
 		if hijo is VehicleWheel3D:
 			hijo.wheel_friction_slip = valor_friccion
 
+func _configurar_camara_ai() -> void:
+	var camara := get_node_or_null("Camera3D") as Camera3D
+	if not camara:
+		return
+	if controlado_por_ai and not mantener_camara_en_ai:
+		camara.current = false
+		camara.queue_free()
+		return
+	camara.current = true
+
+func _obtener_input_direccion() -> float:
+	if controlado_por_ai:
+		return ai_input_direccion
+	var giro_crudo = Input.get_axis("ui_right", "ui_left")
+	if giro_crudo == 0.0:
+		if Input.is_key_pressed(KEY_A):
+			return 1.0
+		if Input.is_key_pressed(KEY_D):
+			return -1.0
+	return giro_crudo
+
+func _obtener_input_aceleracion() -> float:
+	if controlado_por_ai:
+		return ai_input_aceleracion
+	return 1.0 if Input.is_key_pressed(KEY_W) or Input.is_action_pressed("acelerar") else 0.0
+
+func _obtener_input_freno() -> float:
+	if controlado_por_ai:
+		return ai_input_freno
+	return 1.0 if Input.is_key_pressed(KEY_S) or Input.is_action_pressed("frenar") else 0.0
+
+func _obtener_input_freno_mano() -> float:
+	if controlado_por_ai:
+		return ai_input_freno_mano
+	return 1.0 if Input.is_key_pressed(KEY_SPACE) or Input.is_action_pressed("freno_mano") else 0.0
+
 func _controlar_humo(particulas: GPUParticles3D, intensidad: float) -> void:
 	if not particulas:
 		return
@@ -375,11 +432,12 @@ func _aplicar_color_coche() -> void:
 func _aplicar_posicion_guardada() -> void:
 	if DatosJuego.posicion_coche != Vector3.ZERO:
 		global_position = DatosJuego.posicion_coche
-		rotation_degrees = DatosJuego.rotacion_coche
+		# rotation (no rotation_degrees): DatosJuego guarda Euler en radianes.
+		rotation = DatosJuego.rotacion_coche
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		DatosJuego.posicion_coche = global_position
-		DatosJuego.rotacion_coche = rotation_degrees
+		DatosJuego.rotacion_coche = global_transform.basis.get_euler()
 		DatosJuego.guardar_partida()
 		get_tree().quit()

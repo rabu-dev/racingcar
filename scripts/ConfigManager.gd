@@ -55,6 +55,9 @@ func apply_settings():
 	# 2. Aplicar Configuración de Audio
 	var bus_index = AudioServer.get_bus_index("Master")
 	if bus_index != -1:
-		# Convertimos el valor lineal (0-100) a Decibelios logarítmicos para el oído humano
-		var volume_db = linear_to_db(settings["audio"]["master_volume"] / 100.0)
+		# Convertimos el valor lineal (0-100) a Decibelios logarítmicos para el oído humano.
+		# Antes pasaba 0.0 a linear_to_db() → -INF → el AudioServer quedaba en un estado
+		# degradado. Aquí clampeamos a 0.001 como mínimo (-60 dB ≈ silencio real).
+		var volume_norm: float = clamp(settings["audio"]["master_volume"] / 100.0, 0.001, 1.0)
+		var volume_db: float = linear_to_db(volume_norm)
 		AudioServer.set_bus_volume_db(bus_index, volume_db)

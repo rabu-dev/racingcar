@@ -12,6 +12,9 @@ var progreso_carreras: Dictionary = {}
 var posicion_coche: Vector3 = Vector3.ZERO
 var rotacion_coche: Vector3 = Vector3.ZERO
 
+# Referencia al coche físico que esté activo en la escena
+var coche_actual: VehicleBody3D = null
+
 const COSTE_MEJORA = 1000
 const MAX_NIVEL = 5
 const COSTE_PINTURA = 500
@@ -20,6 +23,72 @@ const RUTA_GUARDADO = "user://savegame.json"
 
 func _ready():
 	cargar_partida()
+
+# =====================================================
+# 🛠️ SISTEMA DE CONEXIÓN Y SINCRONIZACIÓN DE FÍSICAS
+# =====================================================
+func registrar_coche(nodo_coche: VehicleBody3D) -> void:
+	coche_actual = nodo_coche
+	print("🚗 Coche registrado en el sistema de guardado.")
+
+	# 1. Esperamos a que la escena se asiente en el árbol de nodos
+	await get_tree().process_frame
+
+	# 2. Esperamos a que el motor de físicas procese el SurfaceTool del mapa dinámico
+	await get_tree().physics_frame
+
+	# 3. Si NO hay partida guardada o la posición guardada parece un placeholder
+	# (origen o casi tocando el suelo), mantenemos el spawn de la escena para
+	# evitar que el coche aparezca en el vacío.
+	if not tiene_partida_guardada() or _posicion_guardada_es_invalida():
+		print("ℹ️ Posición guardada inválida o ausente. Manteniendo spawn original y reescribiendo partida.")
+		posicion_coche = coche_actual.global_transform.origin
+		rotacion_coche = coche_actual.global_transform.basis.get_euler()
+		guardar_partida()
+		return
+
+	aplicar_posicion_al_coche()
+
+
+# Consideramos inválida una posición guardada que esté exactamente en el origen,
+# casi tocando el suelo (Y muy pequeña) o en el placeholder típico del spawn
+# inicial (X=0, Y≈0.5, Z=0). Esto pasa cuando se guardó la partida antes de que
+# el motor de físicas hubiera asentado al coche sobre el asfalto.
+func _posicion_guardada_es_invalida() -> bool:
+	if posicion_coche == Vector3.ZERO:
+		return true
+	if posicion_coche.y < 0.1:
+		return true
+	if posicion_coche.x == 0.0 and posicion_coche.z == 0.0 and abs(posicion_coche.y - 0.5) < 0.01:
+		return true
+	return false
+
+func aplicar_posicion_al_coche() -> void:
+	if not is_instance_valid(coche_actual): return
+	
+	# 1. Congelamos por completo cualquier inercia o velocidad previa residual
+	coche_actual.linear_velocity = Vector3.ZERO
+	coche_actual.angular_velocity = Vector3.ZERO
+	coche_actual.engine_force = 0.0
+	coche_actual.brake = 0.0
+	
+	# 2. Reconstruimos la matriz de transformación limpia
+	var t = Transform3D()
+	t = t.rotated(Vector3.UP, rotacion_coche.y)
+	t = t.rotated(Vector3.RIGHT, rotacion_coche.x)
+	t = t.rotated(Vector3.FORWARD, rotacion_coche.z)
+	t.origin = posicion_coche
+	
+	# 3. Forzamos la posición directamente en el Servidor de Físicas
+	# Esto evita que el coche atraviese las colisiones generadas por código en el primer frame
+	var coche_rid = coche_actual.get_rid()
+	PhysicsServer3D.body_set_state(coche_rid, PhysicsServer3D.BODY_STATE_TRANSFORM, t)
+	PhysicsServer3D.body_set_state(coche_rid, PhysicsServer3D.BODY_STATE_LINEAR_VELOCITY, Vector3.ZERO)
+	PhysicsServer3D.body_set_state(coche_rid, PhysicsServer3D.BODY_STATE_ANGULAR_VELOCITY, Vector3.ZERO)
+	
+	# Aplicamos también al nodo visual
+	coche_actual.global_transform = t
+	print("✨ Coche posicionado con éxito sobre el asfalto en: ", posicion_coche)
 
 # =====================================================
 # MEJORAS Y COMPRAS
@@ -41,9 +110,14 @@ func cambiar_color(nuevo_color: Color) -> bool:
 	return false
 
 # =====================================================
-# SISTEMA DE GUARDADO
+# SISTEMA DE GUARDADO (JSON)
 # =====================================================
 func guardar_partida() -> void:
+	# Si el coche está en la pista, guardamos sus coordenadas reales actuales
+	if is_instance_valid(coche_actual):
+		posicion_coche = coche_actual.global_transform.origin
+		rotacion_coche = coche_actual.global_transform.basis.get_euler()
+
 	var datos = {
 		"dinero": dinero,
 		"color_coche": {
@@ -127,10 +201,21 @@ func cargar_partida() -> bool:
 	print("💾 Partida cargada | Dinero: $", dinero, " | Motor: ", nivel_motor)
 	return true
 
+# 🔥 FUNCIÓN CORREGIDA: Borra el archivo físico Y limpia la memoria RAM al instante
 func eliminar_partida() -> void:
 	if FileAccess.file_exists(RUTA_GUARDADO):
 		DirAccess.remove_absolute(RUTA_GUARDADO)
-		print("🗑️ Partida eliminada")
+		print("🗑️ Archivo savegame.json eliminado del disco")
+	
+	# Reseteo forzado de variables para que no se queden flotando en los menús
+	dinero = 1000000000  # O el dinero inicial que prefieras poner por defecto
+	nivel_motor = 0
+	color_coche = Color.RED
+	progreso_carreras.clear()
+	posicion_coche = Vector3.ZERO
+	rotacion_coche = Vector3.ZERO
+	
+	print("✨ Memoria global del juego restablecida por completo")
 
 func tiene_partida_guardada() -> bool:
 	return FileAccess.file_exists(RUTA_GUARDADO)

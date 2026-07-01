@@ -55,26 +55,29 @@ func _on_play_pressed() -> void:
 		printerr("Error: No has asignado la 'Escena del Juego' en el Inspector del nodo MainMenu.")
 
 func _on_tutorial_pressed() -> void:
-	print("¡Jugar!")
-	
-	# Verificamos si hay una escena asignada
-	if escena_del_juego != "":
-		# Cambiamos a la escena del juego
-		get_tree().change_scene_to_file(escena_del_tutorial)
-	else:
-		printerr("Error: No has asignado la 'Escena del Juego' en el Inspector del nodo MainMenu.")
+	print("📘 Botón Tutorial presionado")
+	_cambiar_a_escena(escena_del_tutorial, "Escena del Tutorial")
 
 
 func _on_ajustes_pressed() -> void:
-	print("Botón Ajustes presionado")
-	# Verificamos si hay una escena asignada
-	if escena_del_juego != "":
-		# Cambiamos a la escena del juego
-		get_tree().change_scene_to_file(mainmenu)
-	else:
-		printerr("Error: No has asignado la 'Escena del Juego' en el Inspector del nodo MainMenu.")
-	# Aquí puedes poner lógica futura, como mostrar un popup de ajustes
+	print("⚙️ Botón Ajustes presionado")
+	# Antes era copy-paste de play: validaba escena_del_juego pero cargaba mainmenu.
+	# Ahora valida la escena a la que realmente va (mainmenu).
+	_cambiar_a_escena(mainmenu, "mainmenu")
+
+
+# Helper compartido: evita el copy-paste que tenía antes y centraliza el mensaje de error.
+func _cambiar_a_escena(ruta: String, nombre_campo: String) -> void:
+	if ruta != "":
+		get_tree().change_scene_to_file(ruta)
+		return
+	printerr("Error: No has asignado '", nombre_campo, "' en el Inspector del nodo MainMenu.")
 	
 func _on_exit_pressed() -> void:
 	get_tree().quit()
 	
+
+
+func _on_borrarpartidas_pressed() -> void:
+	DatosJuego.eliminar_partida()
+	pass # Replace with function body.
