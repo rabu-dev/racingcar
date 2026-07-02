@@ -20,32 +20,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Export Godot Web
         uses: firebelley/godot-export@v7.0.0
         with:
-          godotVersion: "4.7-stable"
-          exportPreset: "Web"
+          godot_executable_download_url: "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_mono_linux.x86_64.zip"
+          godot_export_templates_download_url: "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_mono_export_templates.tpz"
+          relative_project_path: "./"
+          cache: true
 
       - name: Prepare GitHub Pages
         run: |
-          mkdir pages
+          # godot-export exporta a: ~/godot_export_builds/<PresetName>/
+          EXPORT_DIR="$HOME/godot_export_builds/Web"
 
-          cp exports/Web/* pages/
+          echo "=== Archivos exportados ==="
+          ls -la "$EXPORT_DIR" || echo "Directorio no encontrado, buscando..."
+          find "$HOME/godot_export_builds" -type f 2>/dev/null || true
 
-          if [ -f pages/*.html ]; then
-            mv pages/*.html pages/index.html
+          mkdir -p build
+
+          # Copiar todos los archivos exportados a build/
+          cp -r "$EXPORT_DIR"/. build/ 2>/dev/null || find "$HOME/godot_export_builds" -type f -exec cp {} build/ \;
+
+          # Renombrar el HTML principal a index.html
+          if [ ! -f build/index.html ]; then
+            HTML_FILE=$(find build/ -maxdepth 1 -name "*.html" | head -1)
+            if [ -n "$HTML_FILE" ]; then
+              mv "$HTML_FILE" build/index.html
+              echo "Renombrado $HTML_FILE -> build/index.html"
+            fi
           fi
 
-          touch pages/.nojekyll
+          # .nojekyll es CRÍTICO: sin él, GitHub Pages ignora archivos .pck y .wasm
+          touch build/.nojekyll
 
-          ls -la pages
+          echo "=== Archivos en build/ ==="
+          ls -la build/
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: pages
+          path: build
 
   deploy:
     needs: export-web
