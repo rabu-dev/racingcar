@@ -33,7 +33,7 @@ jobs:
       - name: Cache Godot
         uses: actions/cache@v4
         with:
-          path: ${{ env.HOME }}/.local/godot
+          path: /home/runner/.local/godot
           key: godot-${{ runner.os }}-4.7-stable
           restore-keys: |
             godot-${{ runner.os }}-4.7-
@@ -68,11 +68,9 @@ jobs:
           fi
 
       - name: Build web export
-        env:
-          GODOT: ${{ env.HOME }}/.local/godot/godot
         run: |
           mkdir -p build_web
-          $GODOT \
+          $HOME/.local/godot/godot \
             --headless \
             --path "$GITHUB_WORKSPACE" \
             --export-debug "Web" \
