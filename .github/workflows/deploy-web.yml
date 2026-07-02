@@ -33,7 +33,7 @@ jobs:
       - name: Cache Godot
         uses: actions/cache@v4
         with:
-          path: /opt/godot
+          path: ${{ env.HOME }}/.local/godot
           key: godot-${{ runner.os }}-4.7-stable
           restore-keys: |
             godot-${{ runner.os }}-4.7-
@@ -42,20 +42,17 @@ jobs:
         env:
           GODOT_VERSION: "4.7-stable"
         run: |
-          if [ ! -f /opt/godot/godot ]; then
-            mkdir -p /opt/godot
+          if [ ! -f $HOME/.local/godot/godot ]; then
+            mkdir -p $HOME/.local/godot
             cd /tmp
             wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
             unzip -q "Godot_v${GODOT_VERSION}_linux.x86_64.zip"
-            mv Godot_v${GODOT_VERSION}_linux.x86_64 /opt/godot/godot
-            chmod +x /opt/godot/godot
+            mv Godot_v${GODOT_VERSION}_linux.x86_64 $HOME/.local/godot/godot
+            chmod +x $HOME/.local/godot/godot
             rm Godot_v${GODOT_VERSION}_linux.x86_64.zip
           fi
-          /opt/godot/godot --version
-      - name: Install Godot export templates
-        env:
-          GODOT_VERSION: "4.7-stable"
-        run: |
+          $HOME/.local/godot/godot --version
+          # Install export templates for web
           export_dir="$HOME/.local/share/godot/export_templates/4.7.stable"
           mkdir -p "$export_dir"
           if [ ! -f "$export_dir/web_dlink_nothreads_debug.zip" ]; then
@@ -72,7 +69,7 @@ jobs:
 
       - name: Build web export
         env:
-          GODOT: /opt/godot/godot
+          GODOT: ${{ env.HOME }}/.local/godot/godot
         run: |
           mkdir -p build_web
           $GODOT \
