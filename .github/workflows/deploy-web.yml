@@ -55,13 +55,14 @@ jobs:
           # Install export templates for web
           export_dir="$HOME/.local/share/godot/export_templates/4.7.stable"
           mkdir -p "$export_dir"
-          if [ ! -f "$export_dir/web_dlink_nothreads_debug.zip" ]; then
+          if [ ! -f "$export_dir/web_debug.zip" ]; then
             wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz" -O /tmp/export_templates.tpz
-            unzip -q /tmp/export_templates.tpz -d "$export_dir"
+            unzip -q /tmp/export_templates.tpz -d /tmp/export_templates_extract
+            # The .tpz contains files under a "templates/" subdirectory.
+            # Godot expects them directly in the version directory.
+            mv /tmp/export_templates_extract/templates/* "$export_dir/"
+            rm -rf /tmp/export_templates_extract
           fi
-          echo "=== Files in export_templates ==="
-          find "$export_dir" -name "web*" -type f || true
-          ls -la "$export_dir/"
 
       - name: Build web export
         run: |
