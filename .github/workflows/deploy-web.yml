@@ -53,7 +53,7 @@ jobs:
           fi
           $HOME/.local/godot/godot --version
           # Install export templates for web
-          export_dir="$HOME/.local/share/godot/export_templates/4.7.stable"
+          export_dir="$HOME/.local/share/godot/export_templates/4.7.0.stable"
           mkdir -p "$export_dir"
           if [ ! -f "$export_dir/web_dlink_nothreads_debug.zip" ]; then
             wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz" -O /tmp/export_templates.tpz
