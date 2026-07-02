@@ -58,13 +58,6 @@ jobs:
           if [ ! -f "$export_dir/web_dlink_nothreads_debug.zip" ]; then
             wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz" -O /tmp/export_templates.tpz
             unzip -q /tmp/export_templates.tpz -d "$export_dir"
-            # Rename if needed
-            if [ -f "$export_dir/web_debug.zip" ]; then
-              cp "$export_dir/web_debug.zip" "$export_dir/web_dlink_nothreads_debug.zip"
-            fi
-            if [ -f "$export_dir/web_release.zip" ]; then
-              cp "$export_dir/web_release.zip" "$export_dir/web_dlink_nothreads_release.zip"
-            fi
           fi
 
       - name: Build web export
