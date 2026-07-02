@@ -59,6 +59,9 @@ jobs:
             wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz" -O /tmp/export_templates.tpz
             unzip -q /tmp/export_templates.tpz -d "$export_dir"
           fi
+          echo "=== Files in export_templates ==="
+          find "$export_dir" -name "web*" -type f || true
+          ls -la "$export_dir/"
 
       - name: Build web export
         run: |
