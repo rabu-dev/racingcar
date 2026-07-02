@@ -1,16 +1,9 @@
-name: Deploy web build to GitHub Pages
+name: Deploy Godot Web to GitHub Pages
 
 on:
   push:
-    branches: [main]
-    paths:
-      - "scripts/**"
-      - "escena/**"
-      - "addons/**"
-      - "asset/**"
-      - "project.godot"
-      - "export_presets.cfg"
-      - ".github/workflows/deploy-web.yml"
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -18,77 +11,51 @@ permissions:
   pages: write
   id-token: write
 
-# Evita que se pisen varios deploys a la vez en Pages.
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  build:
+  export-web:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Cache Godot binary
-        uses: actions/cache@v4
+      - name: Export Godot Web
+        uses: firebelley/godot-export@v7.0.0
         with:
-          path: /home/runner/.local/godot
-          key: godot-${{ runner.os }}-4.7-stable
-          restore-keys: |
-            godot-${{ runner.os }}-4.7-
+          godotVersion: "4.7-stable"
+          exportPreset: "Web"
 
-      - name: Install Godot 4.7 (stable)
-        env:
-          GODOT_VERSION: "4.7-stable"
+      - name: Prepare GitHub Pages
         run: |
-          if [ ! -f $HOME/.local/godot/godot ]; then
-            mkdir -p $HOME/.local/godot
-            cd /tmp
-            wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
-            unzip -q "Godot_v${GODOT_VERSION}_linux.x86_64.zip"
-            mv Godot_v${GODOT_VERSION}_linux.x86_64 $HOME/.local/godot/godot
-            chmod +x $HOME/.local/godot/godot
-            rm Godot_v${GODOT_VERSION}_linux.x86_64.zip
-          fi
-          $HOME/.local/godot/godot --version
-          export_dir="$HOME/.local/share/godot/export_templates/4.7.stable"
-          mkdir -p "$export_dir"
-          if [ ! -f "$export_dir/web_debug.zip" ]; then
-            wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz" -O /tmp/export_templates.tpz
-            unzip -q /tmp/export_templates.tpz -d /tmp/export_templates_extract
-            mv /tmp/export_templates_extract/templates/* "$export_dir/"
-            rm -rf /tmp/export_templates_extract
+          mkdir pages
+
+          cp exports/Web/* pages/
+
+          if [ -f pages/*.html ]; then
+            mv pages/*.html pages/index.html
           fi
 
-      - name: Build web export
-        run: |
-          mkdir -p build_web
-          $HOME/.local/godot/godot \
-            --headless \
-            --path "$GITHUB_WORKSPACE" \
-            --export-debug "Web" \
-            "build_web/racingcar.html"
+          touch pages/.nojekyll
 
-      - name: Prepare artifact
-        run: |
-          cd build_web
-          touch .nojekyll
-          cp racingcar.html index.html
-          ls -la
+          ls -la pages
 
-      - name: Upload Pages artifact
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build_web
+          path: pages
 
   deploy:
-    needs: build
+    needs: export-web
+
     runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
