@@ -23,8 +23,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
@@ -52,14 +55,11 @@ jobs:
             rm Godot_v${GODOT_VERSION}_linux.x86_64.zip
           fi
           $HOME/.local/godot/godot --version
-          # Install export templates for web
           export_dir="$HOME/.local/share/godot/export_templates/4.7.stable"
           mkdir -p "$export_dir"
           if [ ! -f "$export_dir/web_debug.zip" ]; then
             wget -q "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz" -O /tmp/export_templates.tpz
             unzip -q /tmp/export_templates.tpz -d /tmp/export_templates_extract
-            # The .tpz contains files under a "templates/" subdirectory.
-            # Godot expects them directly in the version directory.
             mv /tmp/export_templates_extract/templates/* "$export_dir/"
             rm -rf /tmp/export_templates_extract
           fi
@@ -76,10 +76,7 @@ jobs:
       - name: Prepare Pages artifact
         run: |
           cd build_web
-          # GitHub Pages no procesa Jekyll y/o ignora archivos con _ inicial
           touch .nojekyll
-          # El export de Godot genera racingcar.html; copiamos como index.html
-          # para que https://rabu-dev.github.io/racingcar/ cargue directo.
           cp racingcar.html index.html
           ls -la
 
@@ -88,13 +85,6 @@ jobs:
         with:
           path: build_web
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
