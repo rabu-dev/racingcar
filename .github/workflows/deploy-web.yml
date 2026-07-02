@@ -25,42 +25,43 @@ jobs:
         with:
           lfs: true
 
-      - name: Export Godot Web
-        uses: firebelley/godot-export@v7.0.0
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
         with:
-          godot_executable_download_url: "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_mono_linux_x86_64.zip"
-          godot_export_templates_download_url: "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_mono_export_templates.tpz"
-          relative_project_path: "./"
-          cache: true
+          dotnet-version: "9.0.x"
 
-      - name: Prepare GitHub Pages
+      - name: Download Godot 4.7 Mono
         run: |
-          # godot-export exporta a: ~/godot_export_builds/<PresetName>/
-          EXPORT_DIR="$HOME/godot_export_builds/Web"
+          mkdir -p $HOME/godot
+          wget -nv "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_mono_linux_x86_64.zip" \
+            -O /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d $HOME/godot
+          chmod +x "$HOME/godot/Godot_v4.7-stable_mono_linux_x86_64/Godot_v4.7-stable_mono_linux.x86_64"
+          ln -s "$HOME/godot/Godot_v4.7-stable_mono_linux_x86_64/Godot_v4.7-stable_mono_linux.x86_64" $HOME/godot/godot
+          $HOME/godot/godot --version
 
-          echo "=== Archivos exportados ==="
-          ls -la "$EXPORT_DIR" || echo "Directorio no encontrado, buscando..."
-          find "$HOME/godot_export_builds" -type f 2>/dev/null || true
+      - name: Install Export Templates
+        run: |
+          mkdir -p ~/.local/share/godot/export_templates/4.7.stable.mono
+          wget -nv "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_mono_export_templates.tpz" \
+            -O /tmp/templates.tpz
+          unzip -q /tmp/templates.tpz -d /tmp/templates
+          cp /tmp/templates/templates/* ~/.local/share/godot/export_templates/4.7.stable.mono/
+          echo "Templates instalados:"
+          ls ~/.local/share/godot/export_templates/4.7.stable.mono/ | grep web
 
+      - name: Export Web
+        run: |
           mkdir -p build
-
-          # Copiar todos los archivos exportados a build/
-          cp -r "$EXPORT_DIR"/. build/ 2>/dev/null || find "$HOME/godot_export_builds" -type f -exec cp {} build/ \;
-
-          # Renombrar el HTML principal a index.html
-          if [ ! -f build/index.html ]; then
-            HTML_FILE=$(find build/ -maxdepth 1 -name "*.html" | head -1)
-            if [ -n "$HTML_FILE" ]; then
-              mv "$HTML_FILE" build/index.html
-              echo "Renombrado $HTML_FILE -> build/index.html"
-            fi
-          fi
-
-          # .nojekyll es CRÍTICO: sin él, GitHub Pages ignora archivos .pck y .wasm
-          touch build/.nojekyll
-
-          echo "=== Archivos en build/ ==="
+          # Primer run: importar assets (necesario para proyectos C#)
+          $HOME/godot/godot --headless --path . --import 2>&1 || true
+          # Exportar solo el preset "Web"
+          $HOME/godot/godot --headless --path . --export-release "Web" "$(pwd)/build/index.html" 2>&1
+          echo "=== Archivos exportados ==="
           ls -la build/
+
+      - name: Create .nojekyll
+        run: touch build/.nojekyll
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
@@ -69,13 +70,10 @@ jobs:
 
   deploy:
     needs: export-web
-
     runs-on: ubuntu-latest
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
