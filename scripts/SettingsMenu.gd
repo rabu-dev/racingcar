@@ -58,11 +58,11 @@ func toggle_menu_ajustes() -> void:
 	if menu_abierto:
 		show()
 		# get_tree().paused = true # Descomenta si quieres congelar el juego de fondo
-		print("⚙️ Menú de ajustes abierto")
+		#print("⚙️ Menú de ajustes abierto")
 	else:
 		hide()
 		# get_tree().paused = false # Descomenta si usaste la pausa arriba
-		print("🚗 Volviendo al juego")
+		#print("🚗 Volviendo al juego")
 
 
 # --- MANEJO DE EVENTOS ---

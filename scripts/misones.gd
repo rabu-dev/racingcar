@@ -60,13 +60,13 @@ func _ready():
 		trigger.mision_pisada.connect(
 			_on_trigger_carrera_3d_mision_pisada
 		)
-		print("Mision1 trigger conectado: ", trigger.name)
+		#print("Mision1 trigger conectado: ", trigger.name)
 
 	for trigger in get_tree().get_nodes_in_group("mision_2"):
 		trigger.mision_pisada.connect(
 			_on_trigger_carrera_3d_mision_pisada
 		)
-		print("Mision2 trigger conectado: ", trigger.name)
+		#print("Mision2 trigger conectado: ", trigger.name)
 
 	# ======================================
 	# PLAYER ID TIEMPO
@@ -123,12 +123,12 @@ func _process(delta: float):
 func ganar_dinero(cantidad: int):
 	DatosJuego.dinero += cantidad
 	DatosJuego.guardar_partida()
-	print(
-		"💰 Has ganado +$",
-		cantidad,
-		" | Total: $",
-		DatosJuego.dinero
-	)
+	#print(
+		#"💰 Has ganado +$",
+		#cantidad,
+		#" | Total: $",
+		#DatosJuego.dinero
+	#)
 
 	actualizar_interfaz_dinero()
 
@@ -152,14 +152,14 @@ func intentar_comprar_mejora(precio_mejora: int) -> bool:
 
 		actualizar_interfaz_dinero()
 
-		print(
-			"✅ Compra realizada | Saldo: $",
-			DatosJuego.dinero
-		)
+		#print(
+			#"✅ Compra realizada | Saldo: $",
+			#DatosJuego.dinero
+		#)
 
 		return true
 
-	print("❌ No tienes dinero suficiente")
+	#print("❌ No tienes dinero suficiente")
 
 	return false
 
@@ -180,17 +180,17 @@ func _on_trigger_carrera_3d_mision_pisada(
 			break
 
 	if idx == -1:
-		print("❌ ID de misión inválido: ", id_mision)
+		#print("❌ ID de misión inválido: ", id_mision)
 		return
 
 	var checkpoint_actual = tabla_misiones[idx]["checkpoint_actual"]
 	var total_cp = tabla_misiones[idx]["total_checkpoints"]
 
-	print(
-		"MISSION:", id_mision,
-		" | ACTUAL:", checkpoint_actual,
-		" | ENTRÓ:", num_checkpoint
-	)
+	#print(
+		#"MISSION:", id_mision,
+		#" | ACTUAL:", checkpoint_actual,
+		#" | ENTRÓ:", num_checkpoint
+	#)
 
 	# ======================================
 	# INICIO DE CARRERA
@@ -202,7 +202,7 @@ func _on_trigger_carrera_3d_mision_pisada(
 
 			tabla_misiones[idx]["checkpoint_actual"] = 0
 
-			print("🏁 Carrera iniciada")
+			#print("🏁 Carrera iniciada")
 
 			if id_mision == "correra_02":
 				carrera_tiempo_activa = true
@@ -218,7 +218,7 @@ func _on_trigger_carrera_3d_mision_pisada(
 
 		tabla_misiones[idx]["checkpoint_actual"] = num_checkpoint
 
-		print("✅ Checkpoint válido:", num_checkpoint)
+		#print("✅ Checkpoint válido:", num_checkpoint)
 
 		return
 
@@ -233,12 +233,12 @@ func _on_trigger_carrera_3d_mision_pisada(
 
 		var vueltas = tabla_misiones[idx]["usuarios"][0]["progreso_vueltas"]
 
-		print(
-			"🏁 VUELTA COMPLETADA ",
-			vueltas,
-			"/",
-			tabla_misiones[idx]["vuelta_total"]
-		)
+		#print(
+			#"🏁 VUELTA COMPLETADA ",
+			#vueltas,
+			#"/",
+			#tabla_misiones[idx]["vuelta_total"]
+		#)
 
 		# ==================================
 		# ACTUALIZAR UI
@@ -298,9 +298,9 @@ func _on_trigger_carrera_3d_mision_pisada(
 	# ERROR ORDEN
 	# ======================================
 
-	print(
-		"❌ Orden incorrecto. Tocaba: ",
-		checkpoint_actual + 1,
-		" pero pisaste: ",
-		num_checkpoint
-	)
+	#print(
+		#"❌ Orden incorrecto. Tocaba: ",
+		#checkpoint_actual + 1,
+		#" pero pisaste: ",
+		#num_checkpoint
+	#)

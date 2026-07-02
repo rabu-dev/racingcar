@@ -55,17 +55,17 @@ func _intentar_cambiar_color(color: Color, nombre: String) -> void:
 	if DatosJuego.cambiar_color(color):
 		actualizar_color_visual()
 		actualizar_interfaz_dinero()
-		print("¡Color cambiado a %s!" % nombre)
+		#print("¡Color cambiado a %s!" % nombre)
 
 
 # Conecta la señal 'pressed()' de tu botón de mejoras aquí:
 func _on_btn_mejorar_motor_pressed() -> void:
 	if DatosJuego.mejorar_motor():
 		actualizar_interfaz_dinero() # Actualiza la UI tras gastar dinero en el motor
-		print("¡Motor mejorado con éxito! Nivel actual: ", DatosJuego.nivel_motor)
-		print("Dinero restante: ", DatosJuego.dinero)
+		#print("¡Motor mejorado con éxito! Nivel actual: ", DatosJuego.nivel_motor)
+		#print("Dinero restante: ", DatosJuego.dinero)
 	else:
-		print("No tienes suficiente dinero o ya alcanzaste el nivel máximo.")
+		printerr("No tienes suficiente dinero o ya alcanzaste el nivel máximo.")
 
 
 # Conecta la señal 'pressed()' de tu botón de cambiar de escena aquí:

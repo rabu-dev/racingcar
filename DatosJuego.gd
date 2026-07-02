@@ -144,13 +144,13 @@ func guardar_partida() -> void:
 	if archivo:
 		archivo.store_string(JSON.stringify(datos, "\t"))
 		archivo.close()
-		print("💾 Partida guardada")
+		#print("💾 Partida guardada")
 	else:
 		printerr("❌ Error al guardar la partida")
 
 func cargar_partida() -> bool:
 	if not FileAccess.file_exists(RUTA_GUARDADO):
-		print("📁 No hay partida guardada")
+		printerr("📁 No hay partida guardada")
 		return false
 
 	var archivo = FileAccess.open(RUTA_GUARDADO, FileAccess.READ)
@@ -205,7 +205,7 @@ func cargar_partida() -> bool:
 func eliminar_partida() -> void:
 	if FileAccess.file_exists(RUTA_GUARDADO):
 		DirAccess.remove_absolute(RUTA_GUARDADO)
-		print("🗑️ Archivo savegame.json eliminado del disco")
+		#print("🗑️ Archivo savegame.json eliminado del disco")
 	
 	# Reseteo forzado de variables para que no se queden flotando en los menús
 	dinero = 1000000000  # O el dinero inicial que prefieras poner por defecto
@@ -215,7 +215,7 @@ func eliminar_partida() -> void:
 	posicion_coche = Vector3.ZERO
 	rotacion_coche = Vector3.ZERO
 	
-	print("✨ Memoria global del juego restablecida por completo")
+	#print("✨ Memoria global del juego restablecida por completo")
 
 func tiene_partida_guardada() -> bool:
 	return FileAccess.file_exists(RUTA_GUARDADO)

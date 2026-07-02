@@ -346,7 +346,7 @@ func _comprobar_y_actualizar_hora(hora: float) -> void:
 	if nuevo_estado_noche != es_de_noche:
 		es_de_noche = nuevo_estado_noche
 		_actualizar_faros()
-		print("💡 Luces del coche actualizadas. Estado encendido: ", es_de_noche or esta_lloviendo)
+		#print("💡 Luces del coche actualizadas. Estado encendido: ", es_de_noche or esta_lloviendo)
 
 func _on_clima_cambiado(nuevo_clima: int) -> void:
 	if nuevo_clima == 1:

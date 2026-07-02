@@ -13,7 +13,7 @@ config_version=5
 config/name="racingcar"
 config/version="pre alpha v 0.0.1"
 run/main_scene="uid://b3bae250pv333"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 boot_splash/image="uid://bhd75nb5ka0q1"
 config/icon="res://icon.svg"
 
@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 Notificaciones="*uid://c60ait6u7yjg5"
 ConfigManager="*uid://backcvnoa1jjn"
 DatosJuego="*uid://brrmq4wvyfc4o"
+MCPRuntimeProbe="*res://addons/godot_mcp/runtime/mcp_runtime_probe.gd"
 
 [dotnet]
 
@@ -29,7 +30,7 @@ project/assembly_name="racingcar"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/road-generator/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg", "res://addons/road-generator/plugin.cfg")
 
 [input]
 
