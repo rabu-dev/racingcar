@@ -18,6 +18,11 @@ permissions:
   pages: write
   id-token: write
 
+# Evita que se pisen varios deploys a la vez en Pages.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache Godot
+      - name: Cache Godot binary
         uses: actions/cache@v4
         with:
           path: /home/runner/.local/godot
@@ -72,7 +77,18 @@ jobs:
           cp racingcar.html index.html
           ls -la
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: build_web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
