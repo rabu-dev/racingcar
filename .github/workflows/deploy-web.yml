@@ -46,9 +46,13 @@ jobs:
           wget -nv "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_mono_export_templates.tpz" \
             -O /tmp/templates.tpz
           unzip -q /tmp/templates.tpz -d /tmp/templates
+          echo "=== Estructura del tpz ==="
+          ls /tmp/templates/
+          ls /tmp/templates/templates/ || true
           cp /tmp/templates/templates/* ~/.local/share/godot/export_templates/4.7.stable.mono/
-          echo "Templates instalados:"
-          ls ~/.local/share/godot/export_templates/4.7.stable.mono/ | grep web
+          echo "=== Templates instalados ==="
+          ls ~/.local/share/godot/export_templates/4.7.stable.mono/
+
 
       - name: Export Web
         run: |
