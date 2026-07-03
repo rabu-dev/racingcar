@@ -28,14 +28,16 @@ func _ready() -> void:
 	if not sol:
 		push_warning("Falta asignar el nodo DirectionalLight3D en el inspector.")
 	
-	# Duplicamos el recurso environment para evitar modificar el archivo original en el disco
 	if environment:
 		environment = environment.duplicate()
+		environment.glow_enabled = false
 		
 	# Dejamos las partículas encendidas pero con ratio 0 para controlarlo por código suavemente
 	if particulas_lluvia:
 		particulas_lluvia.emitting = true
 		particulas_lluvia.amount_ratio = 0.0
+
+var _ultima_hora_visual: float = -1.0
 
 func _process(delta: float) -> void:
 	_avanzar_tiempo(delta)
@@ -55,6 +57,11 @@ func _actualizar_iluminacion_y_cielo() -> void:
 	if not sol or not environment:
 		return
 
+	var hora_bucket = floor(hora_actual * 10.0) / 10.0
+	if hora_bucket == _ultima_hora_visual and clima_actual == Clima.DESPEJADO:
+		return
+	_ultima_hora_visual = hora_bucket
+
 	var angulo_x: float = deg_to_rad((hora_actual * 15.0) - 90.0)
 	sol.rotation.x = angulo_x
 
@@ -71,27 +78,22 @@ func _actualizar_iluminacion_y_cielo() -> void:
 		intensidad_objetivo = lerp(1.0, 0.8, t)
 	elif hora_actual >= 18.0 and hora_actual < 20.0:
 		var t = (hora_actual - 18.0) / 2.0
-		color_objetivo = color_tarde.lerp(color_dia, t)  # ← color_dia, NO color_noche
+		color_objetivo = color_tarde.lerp(color_dia, t)
 		intensidad_objetivo = lerp(0.8, 0.0, t)
 	else:
-		color_objetivo = color_tarde  # ← nunca negro
+		color_objetivo = color_tarde
 		intensidad_objetivo = 0.0
 
 	if clima_actual == Clima.DESPEJADO:
 		sol.light_color = color_objetivo
 		sol.light_energy = intensidad_objetivo
-
 		environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 		environment.ambient_light_color = color_noche
 		environment.ambient_light_energy = clamp(intensidad_objetivo * 0.4, 0.15, 0.4)
-
-		# ✅ REEMPLAZA la línea anterior por esto:
 		if intensidad_objetivo <= 0.01:
-			# Noche — cielo negro azulado
 			environment.background_mode = Environment.BG_COLOR
 			environment.background_color = Color("0a0d1a")
 		else:
-			# Día — vuelve al cielo procedural
 			environment.background_mode = Environment.BG_SKY
 			environment.background_energy_multiplier = lerp(0.1, 1.5, intensidad_objetivo)
 
@@ -121,18 +123,11 @@ func _procesar_transicion_clima(delta: float) -> void:
 				particulas_lluvia.amount_ratio = lerp(particulas_lluvia.amount_ratio, 0.0, interpolacion_clima)
 				
 		Clima.LLUVIOSO:
-			# 1. Atenuar la luz por nubes densas de tormenta
 			if sol:
 				sol.light_energy = lerp(sol.light_energy, 0.15, interpolacion_clima)
 				sol.light_color = sol.light_color.lerp(Color("3a4146"), interpolacion_clima)
-			
-			# 2. Activar reflejos en el entorno (suelo mojado)
-			if environment and not environment.ssr_enabled:
-				environment.ssr_enabled = true
-				
-			# 3. Incrementar la cantidad de lluvia suavemente
 			if particulas_lluvia:
-				particulas_lluvia.amount_ratio = lerp(particulas_lluvia.amount_ratio, 1.0, interpolacion_clima)
+				particulas_lluvia.amount_ratio = lerp(particulas_lluvia.amount_ratio, 0.3, interpolacion_clima)
 				
 		Clima.NIEBLA:
 			if environment:
@@ -140,7 +135,5 @@ func _procesar_transicion_clima(delta: float) -> void:
 					environment.fog_enabled = true
 				if environment.ssr_enabled:
 					environment.ssr_enabled = false
-				environment.fog_density = lerp(environment.fog_density, 0.04, interpolacion_clima)
-				environment.fog_light_color = environment.fog_light_color.lerp(Color("656b6e"), interpolacion_clima)
 			if particulas_lluvia:
 				particulas_lluvia.amount_ratio = lerp(particulas_lluvia.amount_ratio, 0.0, interpolacion_clima)

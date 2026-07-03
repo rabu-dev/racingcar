@@ -23,13 +23,11 @@ func save_settings():
 		for key in settings[section].keys():
 			config.set_value(section, key, settings[section][key])
 	config.save(SAVE_PATH)
-	print("ConfigManager: Ajustes guardados correctamente en ", SAVE_PATH)
 	apply_settings()
 
 func load_settings():
 	if config.load(SAVE_PATH) != OK:
 		# Si el archivo no existe (primera vez que se abre el juego), guardamos los de por defecto
-		print("ConfigManager: No se encontró archivo de guardado. Creando uno por defecto...")
 		save_settings()
 		return
 	
@@ -37,7 +35,6 @@ func load_settings():
 	for section in settings.keys():
 		for key in settings[section].keys():
 			settings[section][key] = config.get_value(section, key, settings[section][key])
-	print("ConfigManager: Ajustes cargados con éxito.")
 	apply_settings()
 
 func apply_settings():

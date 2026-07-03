@@ -38,7 +38,7 @@ const RAD_NINETY_DEG = PI/2 ## aka 1.5707963267949, used for offset_curve algori
 const EDGE_R_NAME = "edge_R" ## Name of reverse lane edge curve
 const EDGE_F_NAME = "edge_F" ## Name of forward lane edge curve
 const EDGE_C_NAME = "edge_C" ## Name of road center (direction divider) edge curve
-const DEFAULT_DENSITY := 4.0
+const DEFAULT_DENSITY := 24.0
 
 ## Lookup for lane texture multiplier - corresponds to RoadPoint.LaneType enum
 const uv_mul = [7, 0, 1, 2, 3, 4, 5, 6, 7, 7]

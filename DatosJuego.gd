@@ -29,7 +29,6 @@ func _ready():
 # =====================================================
 func registrar_coche(nodo_coche: VehicleBody3D) -> void:
 	coche_actual = nodo_coche
-	print("🚗 Coche registrado en el sistema de guardado.")
 
 	# 1. Esperamos a que la escena se asiente en el árbol de nodos
 	await get_tree().process_frame
@@ -41,7 +40,6 @@ func registrar_coche(nodo_coche: VehicleBody3D) -> void:
 	# (origen o casi tocando el suelo), mantenemos el spawn de la escena para
 	# evitar que el coche aparezca en el vacío.
 	if not tiene_partida_guardada() or _posicion_guardada_es_invalida():
-		print("ℹ️ Posición guardada inválida o ausente. Manteniendo spawn original y reescribiendo partida.")
 		posicion_coche = coche_actual.global_transform.origin
 		rotacion_coche = coche_actual.global_transform.basis.get_euler()
 		guardar_partida()
@@ -88,7 +86,6 @@ func aplicar_posicion_al_coche() -> void:
 	
 	# Aplicamos también al nodo visual
 	coche_actual.global_transform = t
-	print("✨ Coche posicionado con éxito sobre el asfalto en: ", posicion_coche)
 
 # =====================================================
 # MEJORAS Y COMPRAS
@@ -198,7 +195,6 @@ func cargar_partida() -> bool:
 			rot_data.get("z", 0.0)
 		)
 
-	print("💾 Partida cargada | Dinero: $", dinero, " | Motor: ", nivel_motor)
 	return true
 
 # 🔥 FUNCIÓN CORREGIDA: Borra el archivo físico Y limpia la memoria RAM al instante

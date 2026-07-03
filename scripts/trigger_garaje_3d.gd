@@ -21,16 +21,15 @@ func _on_body_entered(body: Node3D) -> void:
 	if body is VehicleBody3D: # O el tipo de nodo que sea tu coche
 		jugador_dentro = true
 		Notificaciones.mostrar_notificacion("Presiona 'E' para entrar al garaje", 3.5) # Durará 3.5 segundos en pantalla
-		print("Presiona 'E' para entrar al garaje") # esto una notificacion
+		#print("Presiona 'E' para entrar al garaje") # esto una notificacion
 
 # Detecta cuando el coche sale del área
 func _on_body_exited(body: Node3D) -> void:
 	if body is VehicleBody3D:
 		jugador_dentro = false
-		print("Has salido de la zona del garaje")
+		
 
 # La función que realiza el cambio de escena
 func entrar_al_garaje() -> void:
-	print("Cambiando a la escena del garaje...")
 	# Cambia esto por la ruta real de tu escena del garaje
 	get_tree().change_scene_to_file("res://escena/garaje/Garaje.tscn")

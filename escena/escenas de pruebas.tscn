@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://dj0uwx1cvmn4o" path="res://escena/ajustes.tscn" id="11_iffj7"]
 [ext_resource type="Script" uid="uid://cykvq1xd5qpcw" path="res://scripts/mapa_completo.gd" id="14_s0a1e"]
 
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_l1hgh"]
 
 [sub_resource type="Sky" id="Sky_jb48l"]
@@ -26,7 +27,6 @@ background_energy_multiplier = 1.5
 sky = SubResource("Sky_jb48l")
 sky_custom_fov = 100.0
 ambient_light_source = 3
-glow_enabled = true
 glow_normalized = true
 glow_intensity = 1.2
 
@@ -34,7 +34,7 @@ glow_intensity = 1.2
 
 [sub_resource type="Compositor" id="Compositor_vaoto"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_s0a1e"]
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tpnpa"]
 resource_local_to_scene = true
 rough = true
 absorbent = true
@@ -179,7 +179,7 @@ transform = Transform3D(0.9999999, 0, -2.3283064e-10, 0, 1, 0, 2.3283064e-10, 0,
 
 [node name="VehicleBody3D" parent="." unique_id=1823336173 node_paths=PackedStringArray("display_velocidad", "gear_text", "faros_delanteros") groups=["player"] instance=ExtResource("1_t74bq")]
 transform = Transform3D(0.002303793, 0, -0.9999973, 0, 1, 0, 0.9999973, 0, 0.002303793, 0.0006855726, 1.1748946, 8.369117)
-physics_material_override = SubResource("PhysicsMaterial_s0a1e")
+physics_material_override = SubResource("PhysicsMaterial_tpnpa")
 center_of_mass = Vector3(0, -0.4, 0)
 display_velocidad = NodePath("../Medirvelocidad")
 gear_text = NodePath("../TextureRect/marcha")
@@ -201,7 +201,7 @@ transform = Transform3D(-0.99999994, -0.00050320895, -0.0002006928, -0.000537985
 
 [node name="ParticulasLluvia" type="GPUParticles3D" parent="VehicleBody3D" unique_id=768173223]
 transform = Transform3D(0.0023037933, 0, 0.99999744, 0, 1, 0, -0.99999744, 0, 0.0023037933, -8.369098, 0.67940307, -0.018595144)
-amount = 2000
+amount = 700
 sub_emitter = NodePath(".")
 speed_scale = 1.5
 process_material = SubResource("ParticleProcessMaterial_ht5yi")
@@ -1318,23 +1318,19 @@ offset_bottom = -3.0
 
 [node name="Minimapa" type="Control" parent="." unique_id=477101285]
 layout_mode = 3
-anchors_preset = 0
-offset_left = 1023.0
-offset_top = 516.0
-offset_right = 1119.0
-offset_bottom = 601.0
+anchor_left = 0.8880208
+anchor_top = 0.7962963
+anchor_right = 0.9713542
+anchor_bottom = 0.92746913
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect" type="TextureRect" parent="Minimapa" unique_id=925780218]
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -248.0
-offset_top = -235.0
-offset_right = 2.0
-offset_bottom = 15.0
+anchors_preset = -1
+anchor_left = -1.5833334
+anchor_top = -1.7647059
+anchor_right = 1.0208334
+anchor_bottom = 1.1764706
 grow_horizontal = 0
 grow_vertical = 0
 texture = SubResource("ViewportTexture_vaoto")
@@ -1360,6 +1356,7 @@ grow_vertical = 2
 script = ExtResource("14_s0a1e")
 
 [node name="ajustes" type="Control" parent="." unique_id=87427484]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 42.0

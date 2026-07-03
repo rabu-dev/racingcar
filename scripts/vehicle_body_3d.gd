@@ -55,6 +55,7 @@ var ruedas_traseras: Array[VehicleWheel3D] = []
 var friccion_original_trasera: float = 1.8
 var temporizador_guardado: float = 0.0
 const INTERVALO_GUARDADO: float = 30.0
+var _emision_delantera_anterior: float = 0.0
 
 @export_group("Luces")
 @export var faros_delanteros: Array[SpotLight3D] = []
@@ -113,11 +114,6 @@ func _ready():
 
 	if ruedas_direccion.is_empty():
 		printerr("🛑 ERROR: No hay ruedas con 'Use As Steering'.")
-	else:
-		print("✅ Dirección OK: ", ruedas_direccion.size(), " ruedas.")
-	
-	if not ruedas_traseras.is_empty():
-		print("✅ Tracción OK: ", ruedas_traseras.size(), " ruedas traseras.")
 
 	# 2. Inicializar Audio
 	if motor_audio and not motor_audio.playing:
@@ -127,7 +123,7 @@ func _ready():
 	# 3. Conectar con el entorno y verificar estado de noche inicial
 	var entorno = get_node_or_null("../WorldEnvironment")
 	if entorno:
-		print("✅ WorldEnvironment encontrado")
+		
 		entorno.clima_cambiado.connect(_on_clima_cambiado)
 		entorno.hora_actualizada.connect(_on_hora_actualizada)
 		
@@ -137,7 +133,7 @@ func _ready():
 		elif "hora_actual" in entorno: 
 			_comprobar_y_actualizar_hora(entorno.hora_actual)
 	else:
-		print("❌ WorldEnvironment NO encontrado — revisa la ruta")
+		printerr("WorldEnvironment NO encontrado — revisa la ruta")
 
 	# 4. Inicializar partículas de humo
 	for p in [humo_trasero_izq, humo_trasero_der, humo_delantero_izq, humo_delantero_der]:
@@ -162,13 +158,11 @@ func _input(event):
 	if event.is_action_pressed("subir_marcha"):
 		cambiar_marcha(1)
 		boost_cambio_marcha = 0.6
-		print("⬆ Marcha:", obtener_texto_marcha())
 
-	# Bajar marcha
 	elif event.is_action_pressed("bajar_marcha"):
 		cambiar_marcha(-1)
 		boost_cambio_marcha = 0.4
-		print("⬇ Marcha:", obtener_texto_marcha())
+
 func cambiar_marcha(direccion: int):
 	marcha_actual = clamp(
 		marcha_actual + direccion,
@@ -187,31 +181,24 @@ func obtener_texto_marcha() -> String:
 # PHYSICS PROCESS
 # =====================================================
 func _physics_process(delta):
-	# ------------------------------------------
-	# 1. DIRECCIÓN (0.0 - 1.0, suavizada)
-	# ------------------------------------------
+	var vel = linear_velocity
+	var rapidez = vel.length()
+	var velocidad_kmh = rapidez * 3.6
+	var dir_frente = global_transform.basis.z
+
 	var giro_crudo = _obtener_input_direccion()
-
-	# Factor de velocidad: a mayor velocidad, menos giro possible
-	var velocidad_kmh = linear_velocity.length() * 3.6
 	var factor_velocidad = clamp(1.0 - (velocidad_kmh * factor_velocidad_direccion), 0.3, 1.0)
-
-	# Suavizado del input de dirección
 	input_direccion = lerp(input_direccion, abs(giro_crudo), delta * suavidad_direccion)
 
-	if not ruedas_direccion.is_empty():
+	if ruedas_direccion:
 		var target_giro = giro_crudo * angulo_giro_max * factor_velocidad
 		for rueda in ruedas_direccion:
 			rueda.steering = lerp(rueda.steering, target_giro, delta * suavidad_direccion)
 
-	# ------------------------------------------
-	# 2. MOTOR Y FRENOS (0.0 - 1.0, suavizados)
-	# ------------------------------------------
 	var acel_crudo = _obtener_input_aceleracion()
 	var freno_crudo = _obtener_input_freno()
 	var freno_mano_crudo = _obtener_input_freno_mano()
 
-	# Suavizado de inputs
 	input_aceleracion = lerp(input_aceleracion, acel_crudo, delta * suavidad_freno)
 	input_freno = lerp(input_freno, freno_crudo, delta * suavidad_freno)
 	input_freno_mano = lerp(input_freno_mano, freno_mano_crudo, delta * suavidad_freno_mano)
@@ -219,10 +206,8 @@ func _physics_process(delta):
 	var indice_array = marcha_actual + 1
 	var limite_marcha = VELOCIDADES_MARCHAS[indice_array]
 	var factor_potencia = 1.0
-
 	if velocidad_kmh > limite_marcha:
-		var exceso = velocidad_kmh - limite_marcha
-		factor_potencia = clamp(1.0 - (exceso / 100.0), 0.3, 1.0)
+		factor_potencia = clamp(1.0 - ((velocidad_kmh - limite_marcha) / 100.0), 0.3, 1.0)
 
 	if marcha_actual == -1:
 		engine_force = -input_aceleracion * fuerza_motor * POTENCIA_MARCHAS[indice_array]
@@ -232,91 +217,57 @@ func _physics_process(delta):
 		engine_force = input_aceleracion * fuerza_motor * factor_potencia * POTENCIA_MARCHAS[indice_array]
 
 	brake = input_freno * fuerza_freno
+	apply_central_force(-vel.normalized() * (rapidez * resistencia_aire * rapidez))
 
-	# Resistencia del aire (más realista)
-	var resistencia = linear_velocity.length() * resistencia_aire * linear_velocity.length()
-	apply_central_force(-linear_velocity.normalized() * resistencia)
-
-	# ------------------------------------------
-	# 3. FRENO MANO
-	# ------------------------------------------
-	if not ruedas_traseras.is_empty():
+	if ruedas_traseras:
 		var friccion_objetivo = friccion_original_trasera if input_freno_mano < 0.1 else friccion_freno_mano
 		for rueda in ruedas_traseras:
 			rueda.wheel_friction_slip = lerp(rueda.wheel_friction_slip, friccion_objetivo, delta * suavidad_freno_mano)
-		
-		# Añadir freno extra cuando se usa freno mano
 		if input_freno_mano > 0.5:
 			brake += input_freno_mano * fuerza_freno_mano
 
-	# ------------------------------------------
-	# 4. DERRAPE (HUMO)
-	# ------------------------------------------
-	var velocidad_lateral = abs(linear_velocity.cross(global_transform.basis.z).length())
+	var velocidad_lateral = abs(vel.cross(dir_frente).length())
 	var girando_fuerte = abs(input_direccion) > 0.2
 	var derrapando = velocidad_lateral > 3.0 and velocidad_kmh > 10.0 and (girando_fuerte or input_freno_mano > 0.3)
+	var ffm = clamp(input_freno_mano * 1.5, 0.0, 1.0)
 
-	# Freno mano intensifica el derrape
-	var factor_freno_mano = clamp(input_freno_mano * 1.5, 0.0, 1.0)
-	
 	if derrapando:
-		intensidad_derrape = clamp(velocidad_lateral / 20.0, 0.2, 1.0)
-		intensidad_derrape = clamp(intensidad_derrape + factor_freno_mano, 0.0, 1.0)
+		intensidad_derrape = clamp(velocidad_lateral / 20.0 + ffm, 0.2, 1.0)
 	else:
-		intensidad_derrape = lerp(intensidad_derrape, factor_freno_mano * 0.5, delta * 4.0)
-	#print("lat:", snapped(velocidad_lateral, 0.1), " kmh:", int(velocidad_kmh), " dir:", snapped(input_direccion, 0.01), " freno:", snapped(input_freno, 0.01), " mano:", snapped(input_freno_mano, 0.01), " humo:", int(intensidad_derrape * 100))
+		intensidad_derrape = lerp(intensidad_derrape, ffm * 0.5, delta * 4.0)
 
 	_controlar_humo(humo_trasero_izq, intensidad_derrape)
 	_controlar_humo(humo_trasero_der, intensidad_derrape)
 
 	var derrape_delantero = derrapando and velocidad_kmh < 40.0 and (input_freno > 0.0 or input_freno_mano > 0.5)
-	var intensidad_delantera = clamp(intensidad_derrape * 0.5, 0.0, 0.6) if derrape_delantero else lerp(_get_emission(humo_delantero_izq), 0.0, delta * 4.0)
+	var intensidad_delantera = clamp(intensidad_derrape * 0.5, 0.0, 0.6) if derrape_delantero else lerp(_emision_delantera_anterior, 0.0, delta * 4.0)
+	_emision_delantera_anterior = intensidad_delantera
 	_controlar_humo(humo_delantero_izq, intensidad_delantera)
 	_controlar_humo(humo_delantero_der, intensidad_delantera)
 
-	# ------------------------------------------
-	# 4. SONIDO DEL MOTOR
-	# ------------------------------------------
 	if motor_audio:
 		var rpm_objetivo = 0.8
-
 		if marcha_actual > 0:
-			var progreso_marcha = velocidad_kmh / max(VELOCIDADES_MARCHAS[indice_array], 1.0)
-			rpm_objetivo = 0.8 + (progreso_marcha * 1.0)
+			rpm_objetivo = 0.8 + (velocidad_kmh / max(VELOCIDADES_MARCHAS[indice_array], 1.0))
 		elif marcha_actual == -1:
 			rpm_objetivo = 0.8 + (velocidad_kmh / 35.0) * 0.5
-
 		if input_aceleracion > 0.0:
 			rpm_objetivo += 0.8
 			rpm_actual = lerp(rpm_actual, rpm_objetivo, delta * velocidad_subida_rpm)
 		else:
 			rpm_actual = lerp(rpm_actual, rpm_objetivo, delta * velocidad_bajada_rpm)
-
 		boost_cambio_marcha = lerp(boost_cambio_marcha, 0.0, delta * 4.0)
+		motor_audio.pitch_scale = clamp(rpm_actual + boost_cambio_marcha, pitch_minimo, pitch_maximo)
 
-		var pitch_final = clamp(rpm_actual + boost_cambio_marcha, pitch_minimo, pitch_maximo)
-		motor_audio.pitch_scale = pitch_final
-
-	# ------------------------------------------
-	# 5. GUARDADO PERIÓDICO
-	# ------------------------------------------
 	temporizador_guardado += delta
 	if temporizador_guardado >= INTERVALO_GUARDADO:
 		temporizador_guardado = 0.0
-		# Mantenemos radianes (Vector3 Euler) para ser consistentes con
-		# DatosJuego.guardar_partida() que ya usa basis.get_euler().
-		# Antes se guardaba rotation_degrees, mezclando grados/radianes y
-		# rompiendo la rotación al cargar la partida.
 		DatosJuego.posicion_coche = global_position
 		DatosJuego.rotacion_coche = global_transform.basis.get_euler()
-		DatosJuego.guardar_partida()
+		DatosJuego.guardar_partida.call_deferred()
 
-	# ------------------------------------------
-	# 6. UI
-	# ------------------------------------------
 	if display_velocidad:
 		display_velocidad.text = "%d km/h" % int(velocidad_kmh)
-
 	if gear_text:
 		gear_text.text = obtener_texto_marcha()
 
@@ -391,13 +342,11 @@ func _configurar_camara_ai() -> void:
 func _obtener_input_direccion() -> float:
 	if controlado_por_ai:
 		return ai_input_direccion
-	var giro_crudo = Input.get_axis("ui_right", "ui_left")
-	if giro_crudo == 0.0:
-		if Input.is_key_pressed(KEY_A):
-			return 1.0
-		if Input.is_key_pressed(KEY_D):
-			return -1.0
-	return giro_crudo
+	if Input.is_key_pressed(KEY_A):
+		return 1.0
+	if Input.is_key_pressed(KEY_D):
+		return -1.0
+	return Input.get_axis("ui_right", "ui_left")
 
 func _obtener_input_aceleracion() -> float:
 	if controlado_por_ai:
@@ -419,8 +368,7 @@ func _controlar_humo(particulas: GPUParticles3D, intensidad: float) -> void:
 		return
 	particulas.amount_ratio = intensidad
 
-func _get_emission(particulas: GPUParticles3D) -> float:
-	return particulas.amount_ratio if particulas else 0.0
+	
 
 func _aplicar_color_coche() -> void:
 	for hijo in get_children():

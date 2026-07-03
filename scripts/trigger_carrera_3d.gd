@@ -21,9 +21,6 @@ func _on_body_entered(body: Node3D):
 	if !body.is_in_group("player"):
 		return
 
-	print("Misión:", id_mision_asociada)
-	print("Checkpoint:", numero_checkpoint)
-
 	mision_pisada.emit(
 		id_mision_asociada,
 		numero_checkpoint

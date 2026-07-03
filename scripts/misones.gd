@@ -45,9 +45,13 @@ extends Node
 var carrera_tiempo_activa: bool = false
 var tiempo_transcurrido: float = 0.0
 
+@onready var label_mision = $VBoxContainer/Label_Mision
+@onready var label_mision2 = $VBoxContainer/Label_Mision2
+var _ultimo_texto_mision2: String = ""
+
 
 func _ready():
-	print("--- ESCENA MISIONES ARRANCADA ---")
+	pass
 
 	# Sincronizar la interfaz con el dinero que ya tenga guardado el jugador
 	actualizar_interfaz_dinero()
@@ -79,41 +83,32 @@ func _ready():
 	# UI INICIAL
 	# ======================================
 
-	if has_node("VBoxContainer/Label_Mision"):
-		$VBoxContainer/Label_Mision.text = (
+	if label_mision:
+		label_mision.text = (
 			tabla_misiones[0]["titulo"]
 			+ " - Vueltas: 0/"
 			+ str(tabla_misiones[0]["vuelta_total"])
 		)
 
-	if has_node("VBoxContainer/Label_Mision2"):
-		$VBoxContainer/Label_Mision2.text = (
+	if label_mision2:
+		label_mision2.text = (
 			tabla_misiones[1]["titulo"]
 			+ " - Esperando inicio..."
 		)
 
 
 func _process(delta: float):
-
 	if carrera_tiempo_activa:
-
 		tiempo_transcurrido += delta
-
 		tabla_misiones[1]["tiempo"]["tiempo"] = tiempo_transcurrido
-
 		var minutos = int(tiempo_transcurrido / 60)
 		var segundos = int(tiempo_transcurrido) % 60
-		var milesimas = int(
-			(tiempo_transcurrido - floor(tiempo_transcurrido))
-			* 100
-		)
-
-		if has_node("VBoxContainer/Label_Mision2"):
-			$VBoxContainer/Label_Mision2.text = (
-				tabla_misiones[1]["titulo"]
-				+ " - Tiempo: %02d:%02d.%02d"
-				% [minutos, segundos, milesimas]
-			)
+		var milesimas = int((tiempo_transcurrido - floor(tiempo_transcurrido)) * 100)
+		if label_mision2:
+			var texto = tabla_misiones[1]["titulo"] + " - Tiempo: %02d:%02d.%02d" % [minutos, segundos, milesimas]
+			if texto != _ultimo_texto_mision2:
+				_ultimo_texto_mision2 = texto
+				label_mision2.text = texto
 
 
 # ======================================================
@@ -245,14 +240,8 @@ func _on_trigger_carrera_3d_mision_pisada(
 		# ==================================
 
 		if id_mision == "correra_01":
-			if has_node("VBoxContainer/Label_Mision"):
-				$VBoxContainer/Label_Mision.text = (
-					tabla_misiones[idx]["titulo"]
-					+ " - Vueltas: "
-					+ str(vueltas)
-					+ "/"
-					+ str(tabla_misiones[idx]["vuelta_total"])
-				)
+			if label_mision:
+				label_mision.text = tabla_misiones[idx]["titulo"] + " - Vueltas: " + str(vueltas) + "/" + str(tabla_misiones[idx]["vuelta_total"])
 
 		# ==================================
 		# TERMINAR CARRERA
@@ -264,26 +253,12 @@ func _on_trigger_carrera_3d_mision_pisada(
 			DatosJuego.completar_carrera(id_mision, tiempo_transcurrido if id_mision == "correra_02" else 0.0)
 
 			if id_mision == "correra_02":
-
 				carrera_tiempo_activa = false
-
-				if has_node("VBoxContainer/Label_Mision2"):
-					$VBoxContainer/Label_Mision2.text = (
-						"🏆 "
-						+ tabla_misiones[idx]["titulo"]
-						+ " COMPLETADA +$"
-						+ str(tabla_misiones[idx]["recompensa"])
-					)
-
+				if label_mision2:
+					label_mision2.text = "🏆 " + tabla_misiones[idx]["titulo"] + " COMPLETADA +$" + str(tabla_misiones[idx]["recompensa"])
 			else:
-
-				if has_node("VBoxContainer/Label_Mision"):
-					$VBoxContainer/Label_Mision.text = (
-						"🏆 "
-						+ tabla_misiones[idx]["titulo"]
-						+ " COMPLETADA +$"
-						+ str(tabla_misiones[idx]["recompensa"])
-					)
+				if label_mision:
+					label_mision.text = "🏆 " + tabla_misiones[idx]["titulo"] + " COMPLETADA +$" + str(tabla_misiones[idx]["recompensa"])
 
 		return
 

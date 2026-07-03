@@ -72,9 +72,9 @@ func _crear_ui():
 
 	viewport_mapa = SubViewport.new()
 	viewport_mapa.name = "SubViewportMapa"
-	viewport_mapa.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	viewport_mapa.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
 	viewport_mapa.transparent_bg = false
-	viewport_mapa.size = Vector2i(1920, 1080)
+	viewport_mapa.size = Vector2i(480, 270)
 	viewport_texture.add_child(viewport_mapa)
 
 	camera_mapa = Camera3D.new()
